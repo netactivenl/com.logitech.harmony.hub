@@ -6,7 +6,7 @@
     "en": "Logitech Harmony Hub",
     "nl": "Logitech Harmony Hub"
   },
-  "categories": [ "appliances", "video" ],
+  "category": [ "appliances", "video" ],
   "description": {
     "en": "This app adds flow cards for your Logitech Harmony Hub",
     "nl": "Deze app voegt flow kaarten toe voor je Logitech Harmony Hub"
