@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "Harmony Hub Instellingen",
+    "intro": "Voer het IP-adres van je Harmony Hub hier in. Attentie, de Harmony Hub en je Homey moeten verbonden zijn met hetzelfde WiFi netwerk.",
+    "ipaddress": "IP-adres",
+    "enable_speech": "Spraak gebruiken",
+    "save": "Opslaan",
+    "saved": "Instellingen opgeslagen",
+    "not_saved": "Instellingen niet opgeslagen",
+    "autodiscovered": "Autom. gevonden",
+    "use": "Gebruiken"
+  },
+  "speech_starting_activity": "Activiteit {0} wordt gestart",
+  "speech_activity_already_active": "Activiteit {0} is al actief",
+  "speech_already_off": "Alle A/V apparaten zijn al uitgeschakeld",
+  "speech_turning_all_off": "Alle A/V apparaten worden uitgeschakeld"
+}

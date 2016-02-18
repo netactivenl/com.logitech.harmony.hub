@@ -1,0 +1,53 @@
+{
+  "id": "com.logitech.harmony.hub",
+  "version": "0.1.0",
+  "compatibility": "0.x || 1.x",
+  "name": {
+    "en": "Logitech Harmony Hub",
+    "nl": "Logitech Harmony Hub"
+  },
+  "description": {
+    "en": "This app adds flow cards for your Logitech Harmony Hub",
+    "nl": "Deze app voegt flow kaarten toe voor je Logitech Harmony Hub"
+  },
+  "author": {
+    "name": "Net@ctive"
+  },
+  "images": {
+    "small": "assets/images/small.png",
+    "large": "assets/images/large.png"
+  },
+  "permissions": [
+    "homey:manager:speech-output",
+    "homey:manager:ledring"
+  ],
+  "speech": [ ],
+  "flow": {
+    "actions": [
+      {
+        "id": "start_activity",
+        "title": {
+          "en": "Start an activity",
+          "nl": "Start een activiteit"
+        },
+        "args": [
+          {
+            "name": "activity",
+            "type": "text",
+            "placeholder": {
+              "en": "Activity name",
+              "nl": "Naam activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "all_off",
+        "title": {
+          "en": "Turn off all devices",
+          "nl": "Alle apparaten uitschakelen"
+        }
+      }
+    ]
+  }
+}

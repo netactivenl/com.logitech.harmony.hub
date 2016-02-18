@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
+</head>
+<body>
+    <h1 data-i18n="settings.title"></h1>
+    <p data-i18n="settings.intro"></p>
+
+    <fieldset>
+        <legend>Harmony Hub</legend>
+        <div class="field row">
+            <label for="ipaddress"><span data-i18n="settings.ipaddress"></span></label>
+            <input id="ipaddress" type="text" value="" />
+        </div>
+        <div id="row-auto-discovered" class="field row">
+            <label for="last_found_ipaddress"><span data-i18n="settings.autodiscovered"></span></label>
+            <span id="last_found_name"></span> (<span id="last_found_ipaddress"></span>)
+            <button id="use-discovered-ip" data-i18n="settings.use" onclick="useDiscoveredIp()" style="margin-left: 30px"></button>
+        </div>
+        <div class="field row">
+            <label for="enable_speech"><span data-i18n="settings.enable_speech"></span></label>
+            <input id="enable_speech" type="checkbox" style="width: 13px" />
+        </div>
+    </fieldset>
+
+    <button id="save" class="right" data-i18n="settings.save" onclick="saveSettings()"></button>
+
+    <script type="text/javascript">
+        function onHomeyReady() {
+            // We're ready1
+            Homey.ready();
+
+            // Hide some elements initially.
+            $("#row-auto-discovered").hide();
+
+            // Fill input with already stored settings.
+            Homey.get("ipaddress", function (err, value) {
+                if (value) {
+                    document.getElementById("ipaddress").value = value;
+                }
+            });
+
+            Homey.get("speechEnabled", function (err, value) {
+                if (value) {
+                    document.getElementById("enable_speech").checked = value;
+                }
+            });
+
+            // Get list of hubs.
+            Homey.api("GET", "/hubs/", function (err, hubs) {
+                if (err) {
+                    return console.error(err);
+                }
+
+                refreshListOfHubs(hubs);
+            });
+
+            // Listen for incoming events on added/updated/lost Hubs.
+            Homey.on("hubs_update", function (hubs) {
+                // Combines the online, offline and update events by returning an array with all known hubs for ease of use.
+                refreshListOfHubs(hubs);
+            });
+        }
+
+        function refreshListOfHubs(hubs) {
+            if (hubs.length > 0) {
+                hubs.forEach(function (hub) {
+                    document.getElementById("last_found_name").innerHTML = hub.friendlyName;
+                    document.getElementById("last_found_ipaddress").innerHTML = hub.ip;
+                });
+
+                $("#row-auto-discovered").show();
+            }
+            else {
+                $("#row-auto-discovered").hide();
+            }
+        }
+
+        function useDiscoveredIp() {
+            document.getElementById("ipaddress").value = document.getElementById("last_found_ipaddress").innerHTML;
+        }
+
+        function saveSettings() {
+            // Update running app with new settings (PUT to api).
+            console.log("Saving settings...");
+            var ipaddress = document.getElementById("ipaddress").value;
+            var enableSpeech = document.getElementById("enable_speech").checked;
+            Homey.api("PUT", "/settings/", { "ipaddress": ipaddress, "speechEnabled": enableSpeech }, function (err, success) {
+                if (success) {
+                    console.log("Settings saved successfull.");
+
+                    // Display successful registration.
+                    setSaveButton("lightgreen", "white", __("settings.saved"));
+
+                    // Store settings for the long term.
+                    Homey.set("ipaddress", ipaddress);
+                    Homey.set("speechEnabled", enableSpeech);
+                } else {
+                    console.log("Saving settings failed.");
+
+                    // Display failed registration
+                    setSaveButton("lightcoral", "black", __("settings.not_saved"));
+                }
+
+                resetSaveButton();
+            });
+        }
+
+        function resetSaveButton() {
+            setTimeout(function() {
+                setSaveButton("", "black", __("settings.save"));
+            }, 3000);
+        }
+
+        function setSaveButton(backgroundColor, color, innerHtml) {
+            var btnSave = document.getElementById("save");
+            btnSave.style["background-color"] = backgroundColor;
+            btnSave.style["color"] = color;
+            btnSave.innerHTML = innerHtml;
+        }
+    </script>
+</body>
+</html>

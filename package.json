@@ -1,0 +1,27 @@
+{
+  "name": "com.logitech.harmony.hub",
+  "version": "1.0.0",
+  "description": "Repo containing the sources of the Harmony Hub App for Athom's Homey.",
+  "main": "api.js",
+  "dependencies": {
+    "harmonyhubjs-client": "^1.1.8",
+    "harmonyhubjs-discover": "^1.0.2"
+  },
+  "devDependencies": {
+    "dedupe": "^1.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brinkie2004/com.logitech.harmony.hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brinkie2004/com.logitech.harmony.hub/issues"
+  },
+  "homepage": "https://github.com/brinkie2004/com.logitech.harmony.hub#readme"
+}

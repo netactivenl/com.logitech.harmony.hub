@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "Harmony Hub Settings",
+    "intro": "Enter the IP address of your Harmony Hub here. Please note, the Harmony Hub and your Homey need to be on the same WiFi network.",
+    "ipaddress": "IP address",
+    "enable_speech": "Enable speech",
+    "save": "Save",
+    "saved": "Settings saved",
+    "not_saved": "Settings not saved",
+    "autodiscovered": "Auto discovered",
+    "use": "Use"
+  },
+  "speech_starting_activity": "Starting activity {0}",
+  "speech_activity_already_active": "Activity {0} is already active",
+  "speech_already_off": "All A/V devices are already turned off",
+  "speech_turning_all_off": "Turning all A/V devices off"
+}
