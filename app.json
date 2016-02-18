@@ -14,6 +14,13 @@
   "author": {
     "name": "Net@ctive"
   },
+  "contributors": {
+    "developers": [
+      {
+        "email": "raymond@netactive.nl"
+      }
+    ]
+  },
   "images": {
     "small": "assets/images/small.png",
     "large": "assets/images/large.png"
