@@ -20,7 +20,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <StartWebBrowser>false</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="api.js" />
     <Compile Include="app.js" />
+    <Compile Include="drivers\hub\driver.js" />
     <Compile Include="node_modules\abbrev\abbrev.js" />
     <Compile Include="node_modules\abbrev\test.js" />
     <Compile Include="node_modules\align-text\index.js" />
@@ -959,8 +960,11 @@
     <Content Include="assets\icon.svg" />
     <Content Include="assets\images\example_flow.png" />
     <Content Include="assets\images\large.png" />
-    <Content Include="assets\images\settings.png" />
+    <Content Include="assets\images\devices.png" />
     <Content Include="assets\images\small.png" />
+    <Content Include="drivers\hub\assets\images\large.png" />
+    <Content Include="drivers\hub\assets\images\small.png" />
+    <Content Include="drivers\hub\pair\start.html" />
     <Content Include="locales\en.json" />
     <Content Include="locales\nl.json" />
     <Content Include="node_modules\.bin\escodegen" />
@@ -1813,12 +1817,16 @@
     <Content Include="node_modules\yargs\README.md" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="settings\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />
     <Folder Include="assets\images\" />
+    <Folder Include="drivers\hub\" />
+    <Folder Include="drivers\hub\assets\" />
+    <Folder Include="drivers\hub\assets\images\" />
+    <Folder Include="drivers\hub\pair\" />
     <Folder Include="locales\" />
+    <Folder Include="drivers\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\.bin\" />
     <Folder Include="node_modules\abbrev\" />
@@ -2260,7 +2268,6 @@
     <Folder Include="node_modules\xtend\" />
     <Folder Include="node_modules\yargs\" />
     <Folder Include="node_modules\yargs\lib\" />
-    <Folder Include="settings\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

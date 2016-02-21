@@ -1,6 +1,6 @@
 {
   "id": "com.logitech.harmony.hub",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": "0.x || 1.x",
   "name": {
     "en": "Logitech Harmony Hub",
@@ -31,6 +31,34 @@
     "homey:manager:ledring"
   ],
   "speech": [ ],
+  "drivers": [
+    {
+      "id": "hub",
+      "name": {
+        "en": "Logitech Harmony Hub",
+        "nl": "Logitech Harmony Hub"
+      },
+      "images": {
+        "large": "drivers/hub/assets/images/large.jpg",
+        "small": "drivers/hub/assets/images/small.jpg"
+      },
+      "class": "other",
+      "capabilities": [ ],
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_hubs"
+          }
+        },
+        {
+          "id": "add_hubs",
+          "template": "add_devices"
+        }
+      ]
+    }
+  ],
   "flow": {
     "actions": [
       {
@@ -40,6 +68,11 @@
           "nl": "Start een activiteit"
         },
         "args": [
+          {
+            "name": "hub",
+            "type": "device",
+            "filter": "driver_id=hub"
+          },
           {
             "name": "activity",
             "type": "text",
@@ -55,7 +88,14 @@
         "title": {
           "en": "Turn off all devices",
           "nl": "Alle apparaten uitschakelen"
-        }
+        },
+        "args": [
+          {
+            "name": "hub",
+            "type": "device",
+            "filter": "driver_id=hub"
+          }
+        ]
       }
     ]
   }
