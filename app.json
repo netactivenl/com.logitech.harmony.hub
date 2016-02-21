@@ -39,8 +39,8 @@
         "nl": "Logitech Harmony Hub"
       },
       "images": {
-        "large": "drivers/hub/assets/images/large.jpg",
-        "small": "drivers/hub/assets/images/small.jpg"
+        "large": "drivers/hub/assets/images/large.png",
+        "small": "drivers/hub/assets/images/small.png"
       },
       "class": "other",
       "capabilities": [ ],
