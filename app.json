@@ -75,7 +75,7 @@
           },
           {
             "name": "activity",
-            "type": "text",
+            "type": "autocomplete",
             "placeholder": {
               "en": "Activity name",
               "nl": "Naam activiteit"

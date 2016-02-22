@@ -57,6 +57,44 @@ var self = module.exports = {
             return true;
         }
 
+        Homey.manager('flow').on('action.start_activity.activity.autocomplete', function (callback, args) {
+            //console.log(callback);
+            //console.log(args);
+            //console.log(args.query.length);
+
+            //if (args.query.length === 0) {
+            //    callback(null, []);
+            //    return;
+            //}
+            
+            // TODO: For debugging purposes and to validate issue #234 (https://github.com/athombv/homey/issues/234) was fixed.
+            console.log(args.query);
+            console.log(args.device_data);
+
+            console.log("Finding activity '" + args.query + "' on " + args.device_data.ipaddress + "...");
+            harmony(args.device_data.ipaddress)
+                .then(function(harmonyClient) {
+                    console.log("- Client connected.");
+                    harmonyClient.getActivities()
+                        .then(function(activities) {
+                            console.log(activities);
+                            harmonyClient.end();
+                            var listOfActivities = [];
+                            activities.forEach(function(activity) {
+                                if (args.query.length === 0 || activity.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
+                                    listOfActivities.push({
+                                        //icon: "",
+                                        name: activity.label,
+                                        //description: "",
+                                        id: activity.id
+                                    });
+                                }
+                            });
+                            callback(null, listOfActivities);
+                        });
+                });
+        });
+
         Homey.manager("flow").on("action.start_activity", function(callback, args) {
             console.log("Starting activity '" + args.activity + "' on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
