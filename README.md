@@ -7,12 +7,29 @@ After the app is installed, you have access to a new type of device: Logitech Ha
 
 ### 2. Add your Harmony Hub devices
 On your Homey's interface go to "Devices". Select and add your Harmony Hub or Hubs. Hubs are discovered and listed automatically. If your Hub is not listed, make sure the Hub and your Homey are on the same network.
-![](/assets/images/devices.png)
+![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/devices.png)
 
 ### 3. Create a flow using one of the Harmony Hub cards
 Drag the Harmony Hub you want to control from the sidebar into the "...then" column of your flow and select the card you need. 
 If you pick the "Start an activity" card, then don't forget to enter the name of the activity exactly the same as you see it in the remote controller or app. The name is case-sensitive!
-![](/assets/images/example_flow.png)
+![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow.png)
+
+## Under development
+
+* Implementing autocomplete for easier activity selection on the "Start an activity" flow card.
+
+## Version history
+
+### v0.2.0 (submitted, awaiting approval)
+* Moved flow cards from app to driver, so we support multiple Hubs.
+
+### v0.1.0 (submitted, but disapproved)
+* Added flow card to start an activity.
+* Added flow card to turn all devices off.
+
+## Backlog
+* Make activity on the "Start activity" flow card selectable by changing the input field type from text to autocomplete (currently impossible due to [issue #234](https://github.com/athombv/homey/issues/234)).
+* Add a flow card that can send a command to a specific device.
 
 #### Credits
 Kudo's for the node.js lib to talk to the Harmony Hub go to [@swissmanu](https://github.com/swissmanu).
