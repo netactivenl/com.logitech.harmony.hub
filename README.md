@@ -14,22 +14,19 @@ Drag the Harmony Hub you want to control from the sidebar into the "...then" col
 If you pick the "Start an activity" card, then don't forget to enter the name of the activity exactly the same as you see it in the remote controller or app. The name is case-sensitive!
 ![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow.png)
 
-## Under development
+## Next release (awaiting Homey's fix for issue [issue #234](https://github.com/athombv/homey/issues/234))
 
-* Implementing autocomplete for easier activity selection on the "Start an activity" flow card.
+* Make activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
+* Add a new flow card "Send a command" that can send a command to a specific device.
 
-## Version history
+## Release history
 
-### v0.2.0 (submitted, awaiting approval)
+### v0.2.0 (current)
 * Moved flow cards from app to driver, so we support multiple Hubs.
 
 ### v0.1.0 (submitted, but disapproved)
 * Added flow card to start an activity.
 * Added flow card to turn all devices off.
-
-## Backlog
-* Make activity on the "Start activity" flow card selectable by changing the input field type from text to autocomplete (currently impossible due to [issue #234](https://github.com/athombv/homey/issues/234)).
-* Add a flow card that can send a command to a specific device.
 
 #### Credits
 Kudo's for the node.js lib to talk to the Harmony Hub go to [@swissmanu](https://github.com/swissmanu).
