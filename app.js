@@ -74,16 +74,22 @@ var self = module.exports = {
                             harmonyClient.end();
                             var listOfActivities = [];
                             activities.forEach(function(activity) {
-                                if (activity.isAVActivity && (args.query.length === 0 || activity.name.toUpperCase().indexOf(args.query.toUpperCase()) !== -1)) {
+                                if (activity.isAVActivity && (args.query.length === 0 || activity.label.toUpperCase().indexOf(args.query.toUpperCase()) !== -1)) {
                                     activity.name = activity.label;
                                     activity.icon = activity.baseImageUri + activity.imageKey;
                                     listOfActivities.push(activity);
                                 }
                             });
-                            callback(null, listOfActivities);
+                            callback(null, listOfActivities.sortBy("activityOrder"));
                         });
                 });
         });
+        
+        Array.prototype.sortBy = function (p) {
+            return this.slice(0).sort(function (a, b) {
+                return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+            });
+        }
 
         Homey.manager("flow").on("action.start_activity", function(callback, args) {
             console.log("Starting activity '" + args.activity.name + "' on " + args.hub.ipaddress + "...");
