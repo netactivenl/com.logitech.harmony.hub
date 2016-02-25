@@ -96,6 +96,44 @@
             "filter": "driver_id=hub"
           }
         ]
+      },
+      {
+        "id": "send_command_to_device",
+        "title": {
+          "en": "Send a command to a device",
+          "nl": "Stuur een commando naar een apparaat"
+        },
+        "args": [
+          {
+            "name": "hub",
+            "type": "device",
+            "filter": "driver_id=hub"
+          },
+          {
+            "name": "device",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Device",
+              "nl": "Apparaat"
+            }
+          },
+          {
+            "name": "controlGroup",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Type",
+              "nl": "Soort"
+            }
+          },
+          {
+            "name": "action",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Command",
+              "nl": "Opdracht"
+            }
+          }
+        ]
       }
     ]
   }
