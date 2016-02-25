@@ -23,17 +23,16 @@ var self = module.exports = {
          * @param {} activityName 
          * @returns {} true/false
          */
-        function startActivity(harmonyClient, activityName) {
+        function startActivity(harmonyClient, activityId) {
             harmonyClient.getActivities()
                 .then(function(activities) {
                     activities.some(function(activity) {
-                        if (activity.label === activityName) {
+                        if (activity.id === activityId) {
                             // Found the activity we want.
-                            console.log("Activity '" + activityName + "' found. Starting...");
-                            var id = activity.id;
-                            harmonyClient.startActivity(id);
+                            console.log("Activity '" + activity.name + "' found. Starting...");
+                            harmonyClient.startActivity(activity.id);
                             harmonyClient.end();
-                            console.log("Activity '" + activityName + "' started.");
+                            console.log("Activity '" + activity.name + "' started.");
                             return true;
                         }
 
@@ -58,21 +57,15 @@ var self = module.exports = {
         }
 
         Homey.manager('flow').on('action.start_activity.activity.autocomplete', function (callback, args) {
-            //console.log(callback);
-            //console.log(args);
-            //console.log(args.query.length);
-
-            //if (args.query.length === 0) {
-            //    callback(null, []);
-            //    return;
-            //}
-            
             // TODO: For debugging purposes and to validate issue #234 (https://github.com/athombv/homey/issues/234) was fixed.
             console.log(args.query);
-            console.log(args.device_data);
+            console.log(args.hub);
 
-            console.log("Finding activity '" + args.query + "' on " + args.device_data.ipaddress + "...");
-            harmony(args.device_data.ipaddress)
+            //var ipaddress = args.hub.ipaddress;
+            var ipaddress = "192.168.2.20";
+
+            console.log("Finding activity '" + args.query + "' on " + ipaddress + "...");
+            harmony(ipaddress)
                 .then(function(harmonyClient) {
                     console.log("- Client connected.");
                     harmonyClient.getActivities()
@@ -81,13 +74,10 @@ var self = module.exports = {
                             harmonyClient.end();
                             var listOfActivities = [];
                             activities.forEach(function(activity) {
-                                if (args.query.length === 0 || activity.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
-                                    listOfActivities.push({
-                                        //icon: "",
-                                        name: activity.label,
-                                        //description: "",
-                                        id: activity.id
-                                    });
+                                if (activity.isAVActivity && (args.query.length === 0 || activity.name.toUpperCase().indexOf(args.query.toUpperCase()) !== -1)) {
+                                    activity.name = activity.label;
+                                    activity.icon = activity.baseImageUri + activity.imageKey;
+                                    listOfActivities.push(activity);
                                 }
                             });
                             callback(null, listOfActivities);
@@ -96,7 +86,7 @@ var self = module.exports = {
         });
 
         Homey.manager("flow").on("action.start_activity", function(callback, args) {
-            console.log("Starting activity '" + args.activity + "' on " + args.hub.ipaddress + "...");
+            console.log("Starting activity '" + args.activity.name + "' on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
                 .then(function(harmonyClient) {
                     console.log("- Client connected.");
@@ -104,7 +94,7 @@ var self = module.exports = {
                         .then(function(off) {
                             if (off) {
                                 console.log("- Hub status: off");
-                                var started = startActivity(harmonyClient, args.activity);
+                                var started = startActivity(harmonyClient, args.activity.id);
                                 callback(null, started);
                             } else {
                                 console.log("- Hub status: on");
@@ -112,11 +102,9 @@ var self = module.exports = {
                                     .then(function(currentActivityId) {
                                         console.log("Current activity: " + currentActivityId);
                                         var switched;
-                                        if (currentActivityId !== args.activity) {
-                                            // TODO: This is now always executed, because we compared and ID with an activity name.
-                                            // TODO: This should be refactored, after we implement selecting an activity on the flow card (instead of typing it).
+                                        if (currentActivityId !== args.activity.id) {
                                             console.log("Switching activity...");
-                                            switched = startActivity(harmonyClient, args.activity);
+                                            switched = startActivity(harmonyClient, args.activity.id);
                                         } else {
                                             console.log("Requested activity already selected.");
                                             switched = true;
