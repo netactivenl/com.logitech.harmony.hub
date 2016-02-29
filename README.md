@@ -18,6 +18,10 @@ If you pick the "Start an activity" card, then don't forget to enter the name of
 
 * Make activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
 * Add a new flow card "Send a command" that can send a command to a specific device.
+* Add a new flow card "Activity changed" that can be used to trigger a flow.
+
+Please note [issue #234](https://github.com/athombv/homey/issues/234) is supposed to be fixed in Homey v0.8.21. 
+This release of the Harmony Hub App will first be tested on that version before it's submitted to the AppStore.
 
 ## Release history
 
