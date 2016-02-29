@@ -60,6 +60,24 @@
     }
   ],
   "flow": {
+    "triggers": [
+      {
+        "id": "activity_changed",
+        "title": {
+          "en": "Activity changed",
+          "nl": "Activiteit gewijzigd"
+        },
+        "tokens": [
+          {
+            "name": "activity",
+            "title": {
+              "en": "activity",
+              "nl": "activiteit"
+            }
+          }
+        ]
+      }
+    ],
     "actions": [
       {
         "id": "start_activity",

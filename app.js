@@ -1,12 +1,97 @@
 "use strict";
-
+var HarmonyHubDiscover = require("harmonyhubjs-discover");
 var harmony = require("harmonyhubjs-client");
 
 var self = module.exports = {
     init: function() {
         console.log("Initializing Harmony Hub app...");
+        self.monitorCurrentHubActivity();
         self.listenForTriggers();
         console.log("Initializing Harmony Hub app completed.");
+    },
+    
+    /**
+     * Starts monitors for changes in the current activity on all hub(s) found.
+     * 
+     * @returns {} 
+     */
+    monitorCurrentHubActivity: function() {
+        function getHubs(callback) {
+            var discover = new HarmonyHubDiscover(61991);
+            discover.on("update", function (hubs) {
+                // Combines the online & update events by returning an array with all known hubs for ease of use.
+                discover.stop();
+
+                var hubIps = hubs.reduce(function (prev, hub) {
+                    return prev + (prev.length > 0 ? ", " : "") + hub.ip;
+                }, "");
+                console.log("found hubs: " + hubIps);
+                
+                callback(hubs);
+            });
+            
+            discover.start();
+        }
+        
+        function getActivityName(harmonyClient, activityId, callback) {
+            harmonyClient.getActivities()
+                .then(function (activities) {
+                    activities.forEach(function(activity) {
+                        if (activity.id === activityId) {
+                            if (callback) callback(activity.label);
+                        }
+                    });
+                });
+        }
+
+        getHubs(function (hubs) {
+
+            function getCurrentActivity(hub, callback) {
+                console.log("- Connecting to " + hub.ip + "...");
+                harmony(hub.ip)
+                    .then(function(harmonyClient) {
+                        console.log("- Client connected.");
+                        harmonyClient.isOff()
+                            .then(function(off) {
+                                if (off) {
+                                    harmonyClient.end();
+                                    console.log("- Hub status: off");
+                                    if (callback) callback(null);
+                                } else {
+                                    console.log("- Hub status: on");
+                                    harmonyClient.getCurrentActivity()
+                                        .then(function(currentActivityId) {
+                                            if (currentActivityId !== null) {
+                                                getActivityName(harmonyClient, currentActivityId, function(activityName) {
+                                                    harmonyClient.end();
+                                                    if (callback) callback({ id: currentActivityId, name: activityName });
+                                                });
+                                            } else {
+                                                harmonyClient.end();
+                                                if (callback) callback(null);
+                                            }
+                                        });
+                                }
+                            });
+                    });
+            }
+
+            hubs.forEach(function (hub) {
+                hub.currentActivity = null;
+                setInterval(function() {
+                    getCurrentActivity(hub, function (activity) {
+                        if (activity !== null) {
+                            if (hub.currentActivity !== null && hub.currentActivity.id !== activity.id) {
+                                Homey.manager("flow").trigger("activity_changed", { activity: activity.name });
+                                console.log("Activity changed: " + activity.name);
+                            }
+
+                            hub.currentActivity = activity;
+                        }
+                    });
+                }, 5000);
+            });
+        });
     },
 
     /**
@@ -224,7 +309,7 @@ var self = module.exports = {
                 });
             });
         });
-        
+
         console.log("Listening for triggers...");
     }
 };
