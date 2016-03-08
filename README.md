@@ -13,13 +13,19 @@ On your Homey's interface go to "Devices". Select and add your Harmony Hub or Hu
 Drag the Harmony Hub you want to control from the sidebar into the "...then" column of your flow and select the card you need. 
 If you pick the "Start an activity" card, then don't forget to enter the name of the activity exactly the same as you see it in the remote controller or app. The name is case-sensitive!
 ![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow.png)
+Or
+![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow2.png)
 
-## Next release (awaiting Homey's fix for issue [issue #234](https://github.com/athombv/homey/issues/234))
+## Next release
 
-* Make activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
-* Add a new flow card "Send a command" that can send a command to a specific device.
+* Nothing planned yet.
 
 ## Release history
+
+### v0.3.0 (submitted, awaiting approval)
+
+* Made activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
+* Added a new flow card "Send a command" that can send a command to a specific device.
 
 ### v0.2.0 (current)
 * Moved flow cards from app to driver, so we support multiple Hubs.
