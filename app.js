@@ -185,13 +185,8 @@ var self = module.exports = {
         }
 
         Homey.manager("flow").on("action.start_activity.activity.autocomplete", function(callback, args) {
-            // TODO: For debugging purposes and to validate issue #234 (https://github.com/athombv/homey/issues/234) was fixed.
-            console.log(args);
-            //var ipaddress = args.hub.ipaddress;
-            var ipaddress = "192.168.2.20";
-
-            console.log("Finding activity '" + args.query + "' on " + ipaddress + "...");
-            harmony(ipaddress)
+            console.log("Finding activity '" + args.query + "' on " + args.hub.ipaddress + "...");
+            harmony(args.hub.ipaddress)
                 .then(function(harmonyClient) {
                     console.log("- Client connected.");
                     harmonyClient.getActivities()
@@ -212,11 +207,8 @@ var self = module.exports = {
         });
         
         Homey.manager("flow").on("action.send_command_to_device.device.autocomplete", function (callback, args) {
-            // TODO: For debugging purposes and to validate issue #234 (https://github.com/athombv/homey/issues/234) was fixed.
-            //var ipaddress = args.hub.ipaddress;
-            var ipaddress = "192.168.2.20";
-
-            harmony(ipaddress)
+            console.log("Finding device '" + args.query + "' on " + args.hub.ipaddress + "...");
+            harmony(args.hub.ipaddress)
                 .then(function(harmonyClient) {
                     getDevices(harmonyClient, function(devices) {
                         callback(null, devices.sortBy("name"));
