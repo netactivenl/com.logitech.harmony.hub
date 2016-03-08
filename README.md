@@ -15,6 +15,8 @@ If you pick the "Start an activity" card, then don't forget to enter the name of
 ![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow.png)
 Or
 ![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow2.png)
+Or
+![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow3.png)
 
 ## Next release
 

@@ -959,6 +959,7 @@
     <Content Include="app.json" />
     <Content Include="assets\icon.svg" />
     <Content Include="assets\images\example_flow.png" />
+    <Content Include="assets\images\example_flow3.png" />
     <Content Include="assets\images\example_flow2.png" />
     <Content Include="assets\images\large.png" />
     <Content Include="assets\images\devices.png" />
