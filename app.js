@@ -35,12 +35,16 @@ var self = module.exports = {
         
         function getActivityName(harmonyClient, activityId, callback) {
             harmonyClient.getActivities()
-                .then(function (activities) {
+                .then(function(activities) {
                     activities.forEach(function(activity) {
                         if (activity.id === activityId) {
                             if (callback) callback(activity.label);
                         }
                     });
+                }, function(error) {
+                    console.log("Get activities failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
         }
 
@@ -70,9 +74,21 @@ var self = module.exports = {
                                                 harmonyClient.end();
                                                 if (callback) callback(null);
                                             }
+                                        }, function(error) {
+                                            console.log("Get current activity activity failed: ");
+                                            console.log(JSON.stringify(error));
+                                            callback(error, null);
                                         });
                                 }
+                            }, function(error) {
+                                console.log("Getting device state failed: ");
+                                console.log(JSON.stringify(error));
+                                callback(error, null);
                             });
+                    }, function(error) {
+                        console.log("Connecting to hub failed: ");
+                        console.log(JSON.stringify(error));
+                        callback(error, null);
                     });
             }
 
@@ -108,22 +124,27 @@ var self = module.exports = {
          * @param {} activityName 
          * @returns {} true/false
          */
-        function startActivity(harmonyClient, activityId) {
+        function startActivity(callback, harmonyClient, activityId) {
             harmonyClient.getActivities()
                 .then(function(activities) {
-                    activities.some(function(activity) {
+                    var started = activities.some(function(activity) {
                         if (activity.id === activityId) {
                             // Found the activity we want.
-                            console.log("Activity '" + activity.name + "' found. Starting...");
+                            console.log("Activity '" + activity.label + "' found. Starting...");
                             harmonyClient.startActivity(activity.id);
                             harmonyClient.end();
-                            console.log("Activity '" + activity.name + "' started.");
+                            console.log("Activity '" + activity.label + "' started.");
                             return true;
+                        } else {
+                            return false;
                         }
-
-                        // This activity is not the one we want.
-                        return false;
                     });
+
+                    callback(null, started);
+                }, function(error) {
+                    console.log("Get activities failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
         }
 
@@ -160,6 +181,10 @@ var self = module.exports = {
                     });
                     harmonyClient.end();
                     if (callback) callback(devices);
+                }, function(error) {
+                    console.log("Get devices failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
         }
 
@@ -202,7 +227,15 @@ var self = module.exports = {
                                 }
                             });
                             callback(null, listOfActivities.sortBy("activityOrder"));
+                        }, function(error) {
+                            console.log("Get activities failed: ");
+                            console.log(JSON.stringify(error));
+                            callback(error, null);
                         });
+                }, function(error) {
+                    console.log("Get activities failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
         });
         
@@ -213,6 +246,10 @@ var self = module.exports = {
                     getDevices(harmonyClient, function(devices) {
                         callback(null, devices.sortBy("name"));
                     });
+                }, function(error) {
+                    console.log("Connecting to hub failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
         });
 
@@ -239,67 +276,100 @@ var self = module.exports = {
 
             callback(null, actions.sortBy("name"));
         });
-        
-        Homey.manager("flow").on("action.start_activity", function (callback, args) {
+
+        Homey.manager("flow").on("action.start_activity", function(callback, args) {
             console.log("Starting activity '" + args.activity.name + "' on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
-                .then(function (harmonyClient) {
-                console.log("- Client connected.");
-                harmonyClient.isOff()
-                        .then(function (off) {
-                    if (off) {
-                        console.log("- Hub status: off");
-                        var started = startActivity(harmonyClient, args.activity.id);
-                        callback(null, started);
-                    } else {
-                        console.log("- Hub status: on");
-                        harmonyClient.getCurrentActivity()
-                                    .then(function (currentActivityId) {
-                            console.log("Current activity: " + currentActivityId);
-                            var switched;
-                            if (currentActivityId !== args.activity.id) {
-                                console.log("Switching activity...");
-                                switched = startActivity(harmonyClient, args.activity.id);
+                .then(function(harmonyClient) {
+                    console.log("- Client connected.");
+                    harmonyClient.isOff()
+                        .then(function(off) {
+                            if (off) {
+                                console.log("- Hub status: off");
+                                console.log("Starting activity...");
+                                startActivity(function(error, started) {
+                                    if (error) {
+                                        console.log("Starting activity failed: ");
+                                        console.log(JSON.stringify(error));
+                                        callback(error, null);
+                                    } else {
+                                        callback(null, started);
+                                    }
+                                }, harmonyClient, args.activity.id);
                             } else {
-                                console.log("Requested activity already selected.");
-                                switched = true;
-                                harmonyClient.end();
+                                console.log("- Hub status: on");
+                                harmonyClient.getCurrentActivity()
+                                    .then(function(currentActivityId) {
+                                        console.log("Current activity: " + currentActivityId);
+                                        if (currentActivityId !== args.activity.id) {
+                                            console.log("Switching activity...");
+                                            startActivity(function(error, started) {
+                                                if (error) {
+                                                    console.log("Switching activity failed: ");
+                                                    console.log(JSON.stringify(error));
+                                                    callback(error, null);
+                                                } else {
+                                                    callback(null, started);
+                                                }
+                                            }, harmonyClient, args.activity.id);
+                                        } else {
+                                            console.log("Requested activity already selected.");
+                                            callback(null, true);
+                                            harmonyClient.end();
+                                        }
+                                    }, function(error) {
+                                        console.log("Get current activity failed: ");
+                                        console.log(JSON.stringify(error));
+                                        callback(error, null);
+                                    });
                             }
-                            callback(null, switched);
+                        }, function(error) {
+                            console.log("Unable to determine client state: ");
+                            console.log(JSON.stringify(error));
+                            callback(error, null);
                         });
-                    }
+                }, function(error) {
+                    console.log("Starting activity failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
-            });
-            
-            callback(null, true);
         });
         
         Homey.manager("flow").on("action.send_command_to_device", function (callback, args) {
             console.log("Sending command to " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
-                .then(function (harmonyClient) {
-                var actionSent = sendAction(harmonyClient, args.action.action);
-                callback(null, actionSent);
-            }).catch(function (e) {
-                console.log(e);
-                callback(null, false);
-            });
+                .then(function(harmonyClient) {
+                    var actionSent = sendAction(harmonyClient, args.action.action);
+                    callback(null, actionSent);
+                }, function(error) {
+                    console.log("Sending command failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
+                });
         });
         
         Homey.manager("flow").on("action.all_off", function (callback, args) {
             console.log("Turning all devices off on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
-                .then(function (harmonyClient) {
-                harmonyClient.isOff()
-                        .then(function (off) {
-                    if (!off) {
-                        var turnedOff = turnOff(harmonyClient);
-                        callback(null, turnedOff);
-                    }
-                }).finally(function () {
-                    harmonyClient.end();
+                .then(function(harmonyClient) {
+                    harmonyClient.isOff()
+                        .then(function(off) {
+                            if (!off) {
+                                var turnedOff = turnOff(harmonyClient);
+                                callback(null, turnedOff);
+                            }
+                        }, function(error) {
+                            console.log("Unable to determine client state: ");
+                            console.log(JSON.stringify(error));
+                            callback(error, null);
+                        }).finally(function() {
+                            harmonyClient.end();
+                        });
+                }, function(error) {
+                    console.log("Turning everything off failed: ");
+                    console.log(JSON.stringify(error));
+                    callback(error, null);
                 });
-            });
         });
 
         console.log("Listening for triggers...");

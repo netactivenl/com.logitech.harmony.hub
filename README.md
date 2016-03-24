@@ -24,15 +24,17 @@ Or
 
 ## Release history
 
-### v0.3.0 (submitted, awaiting approval)
+### v0.3.1 (submitted, awaiting approval)
+
+* Improved error handling.
+
+### v0.3.0 (current)
 
 * Made activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
 * Added a new flow card "Send a command" that can send a command to a specific device.
 
-### v0.2.0 (current)
+### v0.2.0
 * Moved flow cards from app to driver, so we support multiple Hubs.
-
-### v0.1.0 (submitted, but disapproved)
 * Added flow card to start an activity.
 * Added flow card to turn all devices off.
 

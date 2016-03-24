@@ -1,7 +1,7 @@
 {
   "name": "com.logitech.harmony.hub",
-  "version": "1.0.0",
-  "description": "Repo containing the sources of the Harmony Hub App for Athom's Homey.",
+  "version": "0.3.1",
+  "description": "This app adds flow cards for your Logitech Harmony Hub",
   "main": "api.js",
   "dependencies": {
     "harmonyhubjs-client": "^1.1.8",
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/brinkie2004/com.logitech.harmony.hub.git"
   },
-  "keywords": [],
+  "keywords": [ ],
   "author": "",
   "license": "ISC",
   "bugs": {
