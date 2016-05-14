@@ -5,7 +5,7 @@ var harmony = require("harmonyhubjs-client");
 var self = module.exports = {
     init: function() {
         console.log("Initializing Harmony Hub app...");
-        self.monitorCurrentHubActivity();
+        //self.monitorCurrentHubActivity();
         self.listenForTriggers();
         console.log("Initializing Harmony Hub app completed.");
     },
@@ -300,7 +300,8 @@ var self = module.exports = {
                                 console.log("- Hub status: on");
                                 harmonyClient.getCurrentActivity()
                                     .then(function(currentActivityId) {
-                                        console.log("Current activity: " + currentActivityId);
+                                        console.log("Current activity id: " + currentActivityId);
+                                        console.log("Requested activity id: " + args.activity.id);
                                         if (currentActivityId !== args.activity.id) {
                                             console.log("Switching activity...");
                                             startActivity(function(error, started) {

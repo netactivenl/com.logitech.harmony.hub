@@ -1,6 +1,6 @@
 {
   "id": "com.logitech.harmony.hub",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "compatibility": "0.x || 1.x",
   "name": {
     "en": "Logitech Harmony Hub",
@@ -8,8 +8,8 @@
   },
   "category": [ "appliances", "video" ],
   "description": {
-    "en": "This app adds flow cards for your Logitech Harmony Hub",
-    "nl": "Deze app voegt flow kaarten toe voor je Logitech Harmony Hub"
+    "en": "Control your Logitech Harmony Hub with Homey",
+    "nl": "Bestuur je Logitech Harmony Hub met Homey"
   },
   "author": {
     "name": "Net@ctive"
@@ -60,24 +60,6 @@
     }
   ],
   "flow": {
-    "triggers": [
-      {
-        "id": "activity_changed",
-        "title": {
-          "en": "Activity changed",
-          "nl": "Activiteit gewijzigd"
-        },
-        "tokens": [
-          {
-            "name": "activity",
-            "title": {
-              "en": "activity",
-              "nl": "activiteit"
-            }
-          }
-        ]
-      }
-    ],
     "actions": [
       {
         "id": "start_activity",

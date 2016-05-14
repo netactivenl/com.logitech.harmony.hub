@@ -1,7 +1,7 @@
 {
   "name": "com.logitech.harmony.hub",
-  "version": "0.3.1",
-  "description": "This app adds flow cards for your Logitech Harmony Hub",
+  "version": "0.3.2",
+  "description": "Control your Logitech Harmony Hub with Homey",
   "main": "api.js",
   "dependencies": {
     "harmonyhubjs-client": "^1.1.8",
