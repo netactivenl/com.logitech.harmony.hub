@@ -24,11 +24,15 @@ Or
 
 ## Release history
 
-### v0.3.1 (submitted, awaiting approval)
+### v0.3.2 (submitted, awaiting approval)
+
+- Removed "activity_changed" action card for now, because the polling was causing the app to crash (eventually) and the Hub to become less responsive.
+ 
+### v0.3.1 (current)
 
 * Improved error handling.
 
-### v0.3.0 (current)
+### v0.3.0
 
 * Made activity on the "Start an activity" flow card selectable by changing the input field type from text to autocomplete.
 * Added a new flow card "Send a command" that can send a command to a specific device.
