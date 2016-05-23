@@ -18,17 +18,17 @@ Or
 Or
 ![](https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/example_flow3.png)
 
-## Next release
-
-* Nothing planned yet.
-
 ## Release history
 
-### v0.3.2 (submitted, awaiting approval)
+### v0.3.3 (submitted, awaiting approval)
 
-- Removed "activity_changed" action card for now, because the polling was causing the app to crash (eventually) and the Hub to become less responsive.
+* Fixed possible app crash while bashing the "send activity" device selection box.
+
+### v0.3.2 (current)
+
+* Removed "activity_changed" action card for now, because the polling was causing the app to crash (eventually) and the Hub to become less responsive.
  
-### v0.3.1 (current)
+### v0.3.1
 
 * Improved error handling.
 

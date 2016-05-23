@@ -3,6 +3,8 @@ var HarmonyHubDiscover = require("harmonyhubjs-discover");
 var harmony = require("harmonyhubjs-client");
 
 var self = module.exports = {
+    connecting: false,
+
     init: function() {
         console.log("Initializing Harmony Hub app...");
         //self.monitorCurrentHubActivity();
@@ -238,8 +240,13 @@ var self = module.exports = {
                     callback(error, null);
                 });
         });
-        
-        Homey.manager("flow").on("action.send_command_to_device.device.autocomplete", function (callback, args) {
+
+        Homey.manager("flow").on("action.send_command_to_device.device.autocomplete", function(callback, args) {
+            if (self.connecting) {
+                callback("Connecting. Please wait...", null);
+                return;
+            }
+            self.connecting = true;
             console.log("Finding device '" + args.query + "' on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
                 .then(function(harmonyClient) {
@@ -250,6 +257,8 @@ var self = module.exports = {
                     console.log("Connecting to hub failed: ");
                     console.log(JSON.stringify(error));
                     callback(error, null);
+                }).finally(function() {
+                    self.connecting = false;
                 });
         });
 
