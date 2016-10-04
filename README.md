@@ -26,7 +26,7 @@ Or
 
 ### v0.3.4 (current)
 
-* Fixed app crashes due to API changes in Homey v0.10.0 (credits go to Futurist!).
+* Fixed app crashes due to API changes in Homey v0.10.0 (credits go to Phturist!).
 
 ### v0.3.3
 
