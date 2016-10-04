@@ -20,11 +20,19 @@ Or
 
 ## Release history
 
-### v0.3.3 (submitted, awaiting approval)
+### v0.4.0 (under construction)
+
+* App rewrite to use one open connection for each hub.
+
+### v0.3.4 (current)
+
+* Fixed app crashes due to API changes in Homey v0.10.0 (credits go to Futurist!).
+
+### v0.3.3
 
 * Fixed possible app crash while bashing the "send activity" device selection box.
 
-### v0.3.2 (current)
+### v0.3.2
 
 * Removed "activity_changed" action card for now, because the polling was causing the app to crash (eventually) and the Hub to become less responsive.
  
