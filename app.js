@@ -11,11 +11,11 @@ var self = module.exports = {
         self.listenForTriggers();
         console.log("Initializing Harmony Hub app completed.");
     },
-    
+
     /**
      * Starts monitors for changes in the current activity on all hub(s) found.
-     * 
-     * @returns {} 
+     *
+     * @returns {}
      */
     monitorCurrentHubActivity: function() {
         function getHubs(callback) {
@@ -28,13 +28,13 @@ var self = module.exports = {
                     return prev + (prev.length > 0 ? ", " : "") + hub.ip;
                 }, "");
                 console.log("found hubs: " + hubIps);
-                
+
                 callback(hubs);
             });
-            
+
             discover.start();
         }
-        
+
         function getActivityName(harmonyClient, activityId, callback) {
             harmonyClient.getActivities()
                 .then(function(activities) {
@@ -114,16 +114,16 @@ var self = module.exports = {
 
     /**
      * Starts listening for specific triggers and sends them to the requested Harmony Hub.
-     * 
-     * @returns {} 
+     *
+     * @returns {}
      */
     listenForTriggers: function() {
 
         /**
          * Starts the specified activity through the given harmony client.
-         * 
-         * @param {} harmonyClient 
-         * @param {} activityName 
+         *
+         * @param {} harmonyClient
+         * @param {} activityName
          * @returns {} true/false
          */
         function startActivity(callback, harmonyClient, activityId) {
@@ -152,8 +152,8 @@ var self = module.exports = {
 
         /**
          * Turns off all devices through the given harmony client.
-         * 
-         * @param {} harmonyClient 
+         *
+         * @param {} harmonyClient
          * @returns {} true/false
          */
         function turnOff(harmonyClient) {
@@ -165,10 +165,10 @@ var self = module.exports = {
 
         /**
          * Gets a list of devices, returned through the specified callback method.
-         * 
-         * @param {} harmonyClient 
-         * @param {} callback 
-         * @returns {} 
+         *
+         * @param {} harmonyClient
+         * @param {} callback
+         * @returns {}
          */
         function getDevices(harmonyClient, callback) {
             harmonyClient.getAvailableCommands()
@@ -192,10 +192,10 @@ var self = module.exports = {
 
         /**
          * Sends the specified command through the given harmony client.
-         * 
-         * @param {} harmonyClient 
-         * @param {} action 
-         * @returns {} true/false 
+         *
+         * @param {} harmonyClient
+         * @param {} action
+         * @returns {} true/false
          */
         function sendAction(harmonyClient, action) {
             var encodedAction = action.replace(/\:/g, "::");
@@ -212,8 +212,8 @@ var self = module.exports = {
         }
 
         Homey.manager("flow").on("action.start_activity.activity.autocomplete", function(callback, args) {
-            console.log("Finding activity '" + args.query + "' on " + args.hub.ipaddress + "...");
-            harmony(args.hub.ipaddress)
+            console.log("Finding activity '" + args.query + "' on " + args.args.hub.ipaddress + "...");
+            harmony(args.args.hub.ipaddress)
                 .then(function(harmonyClient) {
                     console.log("- Client connected.");
                     harmonyClient.getActivities()
@@ -247,8 +247,8 @@ var self = module.exports = {
                 return;
             }
             self.connecting = true;
-            console.log("Finding device '" + args.query + "' on " + args.hub.ipaddress + "...");
-            harmony(args.hub.ipaddress)
+            console.log("Finding device '" + args.query + "' on " + args.args.hub.ipaddress + "...");
+            harmony(args.args.hub.ipaddress)
                 .then(function(harmonyClient) {
                     getDevices(harmonyClient, function(devices) {
                         callback(null, devices.sortBy("name"));
@@ -263,22 +263,22 @@ var self = module.exports = {
         });
 
         Homey.manager("flow").on("action.send_command_to_device.controlGroup.autocomplete", function(callback, args) {
-            if (args.device.length === 0) {
+            if (args.args.device.length === 0) {
                 callback(null, []);
                 return;
             }
 
-            callback(null, args.device.controlGroup.sortBy("name"));
+            callback(null, args.args.device.controlGroup.sortBy("name"));
         });
 
         Homey.manager("flow").on("action.send_command_to_device.action.autocomplete", function(callback, args) {
-            if (args.device.length === 0 || args.controlGroup.length === 0) {
+            if (args.args.device.length === 0 || args.args.controlGroup.length === 0) {
                 callback(null, []);
                 return;
             }
 
             var actions = [];
-            args.controlGroup.function.forEach(function(action) {
+            args.args.controlGroup.function.forEach(function(action) {
                 action.name = action.label;
                 actions.push(action);
             });
@@ -344,7 +344,7 @@ var self = module.exports = {
                     callback(error, null);
                 });
         });
-        
+
         Homey.manager("flow").on("action.send_command_to_device", function (callback, args) {
             console.log("Sending command to " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
@@ -357,7 +357,7 @@ var self = module.exports = {
                     callback(error, null);
                 });
         });
-        
+
         Homey.manager("flow").on("action.all_off", function (callback, args) {
             console.log("Turning all devices off on " + args.hub.ipaddress + "...");
             harmony(args.hub.ipaddress)
