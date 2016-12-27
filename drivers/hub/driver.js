@@ -15,7 +15,7 @@ var Clients = {};
 module.exports.init = function(devices_data, callback) {
     // ATHOM: When the driver starts, Homey rebooted. Initialize all previously paired devices.
     console.log("Previously paired " + devices_data.length + " hub(s).");
-    console.log(JSON.stringify(devices_data));
+    //console.log(JSON.stringify(devices_data));
 
     if (devices_data.length > 0) {
         // Discover hubs currently on the network.
@@ -23,7 +23,7 @@ module.exports.init = function(devices_data, callback) {
             StopHubDiscovery();
 
             console.log("Discovered " + hubs.length + " hub(s).");
-            console.log(JSON.stringify(hubs));
+            //console.log(JSON.stringify(hubs));
 
             devices_data.forEach(function(device_data) {
                 // ATHOM: Do something here to initialise the device, e.g. start a socket connection.
@@ -122,7 +122,7 @@ module.exports.pair = function(socket) {
                     callback(error, null);
                 } else {
                     console.log("Discovered " + hubs.length + " hub(s).");
-                    console.log(JSON.stringify(hubs));
+                    //console.log(JSON.stringify(hubs));
 
                     StopHubDiscovery();
 
@@ -130,7 +130,7 @@ module.exports.pair = function(socket) {
                     hubs.forEach(function(hub) {
                         listOfDevices.push(MapHubToDeviceData(hub));
                     });
-                    console.log(JSON.stringify(listOfDevices));
+                    //console.log(JSON.stringify(listOfDevices));
 
                     // err, result style
                     callback(null, listOfDevices);
@@ -394,7 +394,7 @@ function GetActivityName(device_data_id, activityId, callback) {
 // ATHOM: a helper method to add a device to the devices list.
 function InitDevice(device_data) {
     console.log("Initializing device...");
-    console.log(JSON.stringify(device_data));
+    //console.log(JSON.stringify(device_data));
 
     // Add hub to list of devices.
     Hubs[device_data.id] = {};
@@ -653,8 +653,7 @@ function SendAction(client, action) {
  * @returns {} true/false
  */
 function TurnOff(client) {
-    var result = client.turnOff();
-    console.log(JSON.stringify(result));
+    client.turnOff();
     console.log("All devices turned off.");
     return true;
 }
