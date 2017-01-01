@@ -20,9 +20,10 @@ Or
 
 ## Release history
 
-### v1.0 (current)
+### v1.0.0 (current)
 
-* App rewrite to use one connection for each hub.
+* App rewritten so it uses only one connection for each hub.
+* PLEASE NOTE THIS RELEASE REQUIRES RE-ADDING YOUR HUB(S)!
 
 ### v0.3.4
 
