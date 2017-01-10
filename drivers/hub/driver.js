@@ -203,7 +203,7 @@ module.exports.autocompleteActivity = function(args, callback) {
         console.log("Finding activities on " + args.args.hub.ip + "...");
     }
 
-    GetClient(args.hub.id,
+    GetClient(args.args.hub.id,
         function(error, client) {
             if (error) {
                 console.log("ERROR: " + JSON.stringify(error));
@@ -240,7 +240,7 @@ module.exports.autocompleteDevice = function(args, callback) {
         console.log("Finding device on " + args.args.hub.ip + "...");
     }
 
-    GetClient(args.hub.id,
+    GetClient(args.args.hub.id,
         function(error, client) {
             if (error) {
                 console.log("ERROR: " + JSON.stringify(error));
