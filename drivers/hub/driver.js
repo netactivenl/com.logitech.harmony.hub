@@ -203,6 +203,8 @@ module.exports.autocompleteActivity = function(args, callback) {
         console.log("Finding activities on " + args.args.hub.ip + "...");
     }
 
+    //Homey.log(JSON.stringify(args));
+
     GetClient(args.args.hub.id,
         function(error, client) {
             if (error) {
@@ -239,6 +241,8 @@ module.exports.autocompleteDevice = function(args, callback) {
     } else {
         console.log("Finding device on " + args.args.hub.ip + "...");
     }
+
+    //Homey.log(JSON.stringify(args));
 
     GetClient(args.args.hub.id,
         function(error, client) {
@@ -329,7 +333,7 @@ module.exports.startActivity = function (args, callback) {
 module.exports.sendCommandToDevice = function (args, callback) {
     console.log("Sending command to " + args.hub.ip + "...");
 
-    GetClient(device_data_id,
+    GetClient(args.hub.id,
         function(error, client) {
             if (error) {
                 console.log("ERROR: " + JSON.stringify(error));
@@ -531,6 +535,12 @@ function InitDevice(device_data) {
             });
 }
 
+/**
+ * Refreshes the current device activity. Triggers the "activity_changed" flow card if it differs from the previous refresh.
+ * 
+ * @param {} deviceDataId
+ * @returns {}
+ */
 function RefreshCurrentDeviceActivity(deviceDataId) {
     var device = Hubs[deviceDataId];
     console.log("Refreshing current activity for device " + deviceDataId + "...");
@@ -581,6 +591,12 @@ function RefreshCurrentDeviceActivity(deviceDataId) {
         });
 }
 
+/**
+ * Maps hub details to device_data object.
+ * 
+ * @param {} hub
+ * @returns {} device_data
+ */
 function MapHubToDeviceData(hub) {
     return {
         name: hub.friendlyName,

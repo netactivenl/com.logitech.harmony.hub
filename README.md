@@ -20,7 +20,13 @@ Or
 
 ## Release history
 
-### v1.0.0 (current)
+### v1.0.2 (current)
+
+* Fixed an issue that would break the "send a command" flow card's "control type" dropdown.
+* Fixed an issue that would break the "send a command" flow card execution.
+* The "send a command" flow card's "control type" and "activity" dropdowns now filter by input.
+
+### v1.0.0
 
 * App rewritten so it uses only one connection for each hub.
 * PLEASE NOTE THIS RELEASE REQUIRES RE-ADDING YOUR HUB(S)!

@@ -36,27 +36,40 @@ var self = module.exports = {
 
         Homey.manager("flow")
             .on("action.send_command_to_device.controlGroup.autocomplete",
-                function(callback, args) {
+                function (callback, args) {
+                    //Homey.log(JSON.stringify(args));
                     if (args.args.device.length === 0) {
                         callback(null, []);
                         return;
                     }
 
-                    callback(null, args.args.device.controlGroup.sortBy("name"));
+                    var listOfControlGroups = [];
+                    args.args.device.controlGroup.forEach(function (controlGroup) {
+                        if (args.query.length === 0 ||
+                                controlGroup.name.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
+                            listOfControlGroups.push(controlGroup);
+                        }
+                    });
+
+                    callback(null, listOfControlGroups.sortBy("name"));
                 });
 
         Homey.manager("flow")
             .on("action.send_command_to_device.action.autocomplete",
                 function(callback, args) {
+                    //Homey.log(JSON.stringify(args));
                     if (args.args.device.length === 0 || args.args.controlGroup.length === 0) {
                         callback(null, []);
                         return;
                     }
 
                     var actions = [];
-                    args.args.controlGroup.function.forEach(function(action) {
-                        action.name = action.label;
-                        actions.push(action);
+                    args.args.controlGroup.function.forEach(function (action) {
+                        if (args.query.length === 0 ||
+                            action.label.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
+                            action.name = action.label;
+                            actions.push(action);
+                        }
                     });
 
                     callback(null, actions.sortBy("name"));
