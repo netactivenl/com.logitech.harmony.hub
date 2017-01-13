@@ -958,6 +958,7 @@
     <Compile Include="node_modules\yargs\lib\validation.js" />
     <Content Include="app.json" />
     <Content Include="assets\icon.svg" />
+    <Content Include="assets\images\donate.png" />
     <Content Include="assets\images\example_flow.png" />
     <Content Include="assets\images\example_flow3.png" />
     <Content Include="assets\images\example_flow2.png" />

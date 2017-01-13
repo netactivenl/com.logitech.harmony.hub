@@ -1,4 +1,5 @@
 # com.logitech.harmony.hub
+[<img align="right" src="https://github.com/netactivenl/com.logitech.harmony.hub/raw/master/assets/images/donate.png">](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4XUDMSVD2EZ3J)
 This repo containing the sources of the Harmony Hub App for Athom's fantastic [Homey](http://www.athom.com) product.
 
 ### 1. Install the Logitech Harmony Hub app
