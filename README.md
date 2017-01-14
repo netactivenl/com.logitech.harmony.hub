@@ -21,7 +21,20 @@ Or
 
 ## Release history
 
-### v1.0.2 (current)
+### v1.0.3 (current)
+
+* Major improvements on activity change detection (no more polling needed!).
+* Added additional flow cards to the "When..." column for more refined flow control: 
+  1. Activity start requested; 
+  2. Activity starting; 
+  3. Activity started;
+  4. Activity stop requested;
+  5. Activity stopping;
+  6. All devices turned of. 
+* Removed "Activity changed" flow card, because it has become useless.
+* Changed the name of the app to "Harmony Hub App", so the distinction between the app (under Apps section) and actual devices (under Devices section) is clearer. 
+
+### v1.0.2
 
 * Fixed an issue that would break the "send a command" flow card's "control type" dropdown.
 * Fixed an issue that would break the "send a command" flow card execution.

@@ -1,10 +1,10 @@
 {
   "id": "com.logitech.harmony.hub",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "compatibility": "0.x || 1.x",
   "name": {
-    "en": "Logitech Harmony Hub",
-    "nl": "Logitech Harmony Hub"
+    "en": "Harmony Hub App",
+    "nl": "Harmony Hub App"
   },
   "category": [ "appliances", "video" ],
   "description": {
@@ -35,8 +35,8 @@
     {
       "id": "hub",
       "name": {
-        "en": "Logitech Harmony Hub",
-        "nl": "Logitech Harmony Hub"
+        "en": "Harmony Hub App",
+        "nl": "Harmony Hub App"
       },
       "images": {
         "large": "drivers/hub/assets/images/large.png",
@@ -62,17 +62,132 @@
   "flow": {
     "triggers": [
       {
-        "id": "activity_changed",
+        "id": "activity_start_requested",
         "title": {
-          "en": "Activity changed",
-          "nl": "Activiteit gewijzigd"
+          "en": "Activity start requested",
+          "nl": "Activiteit starten gevraagd"
         },
         "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
+            }
+          },
           {
             "name": "activity",
             "title": {
               "en": "activity",
               "nl": "activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "activity_starting",
+        "title": {
+          "en": "Activity starting",
+          "nl": "Activiteit bezig met starten"
+        },
+        "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
+            }
+          },
+          {
+            "name": "activity",
+            "title": {
+              "en": "activity",
+              "nl": "activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "activity_started",
+        "title": {
+          "en": "Activity started",
+          "nl": "Activiteit gestart"
+        },
+        "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
+            }
+          },
+          {
+            "name": "activity",
+            "title": {
+              "en": "activity",
+              "nl": "activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "activity_stop_requested",
+        "title": {
+          "en": "Activity stop requested",
+          "nl": "Activiteit stoppen gevraagd"
+        },
+        "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
+            }
+          },
+          {
+            "name": "activity",
+            "title": {
+              "en": "activity",
+              "nl": "activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "activity_stopping",
+        "title": {
+          "en": "Activity stopping",
+          "nl": "Activiteit bezig met stoppen"
+        },
+        "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
+            }
+          },
+          {
+            "name": "activity",
+            "title": {
+              "en": "activity",
+              "nl": "activiteit"
+            }
+          }
+        ]
+      },
+      {
+        "id": "all_turned_off",
+        "title": {
+          "en": "All devices turned off",
+          "nl": "Alle apparaten uitgeschakeld"
+        },
+        "tokens": [
+          {
+            "name": "hub_name",
+            "title": {
+              "en": "hub",
+              "nl": "hub"
             }
           }
         ]

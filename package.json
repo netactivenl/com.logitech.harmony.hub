@@ -5,7 +5,8 @@
   "main": "api.js",
   "dependencies": {
     "harmonyhubjs-client": "^1.1.8",
-    "harmonyhubjs-discover": "^1.0.2"
+    "harmonyhubjs-discover": "^1.0.2",
+    "moment": "^2.17.1"
   },
   "devDependencies": {
     "dedupe": "^1.0.2"
@@ -17,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/brinkie2004/com.logitech.harmony.hub.git"
   },
-  "keywords": [ ],
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {

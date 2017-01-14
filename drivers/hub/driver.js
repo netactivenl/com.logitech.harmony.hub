@@ -1,5 +1,5 @@
 ﻿"use strict";
-
+var moment = require("moment");
 var HarmonyHubDiscover = require("harmonyhubjs-discover");
 var Harmony = require("harmonyhubjs-client");
 
@@ -14,20 +14,20 @@ var Clients = {};
 
 module.exports.init = function(devices_data, callback) {
     // ATHOM: When the driver starts, Homey rebooted. Initialize all previously paired devices.
-    console.log("Previously paired " + devices_data.length + " hub(s).");
-    //console.log(JSON.stringify(devices_data));
+    Log("Previously paired " + devices_data.length + " hub(s).");
+    //Log(JSON.stringify(devices_data));
 
     if (devices_data.length > 0) {
         // Discover hubs currently on the network.
         StartHubDiscovery(function(error, hubs) {
             StopHubDiscovery();
 
-            console.log("Discovered " + hubs.length + " hub(s).");
-            //console.log(JSON.stringify(hubs));
+            Log("Discovered " + hubs.length + " hub(s).");
+            //Log(JSON.stringify(hubs));
 
             devices_data.forEach(function(device_data) {
                 // ATHOM: Do something here to initialise the device, e.g. start a socket connection.
-                console.log("Finding previously paired hub with id: " + device_data.id);
+                Log("Finding previously paired hub with id: " + device_data.id);
 
                 // Find out if this previously paired hub was discovered on the network.
                 var hubDiscovered = hubs.some(function(hub) {
@@ -44,7 +44,7 @@ module.exports.init = function(devices_data, callback) {
                     // Initialize the previously paired hub.
                     InitDevice(device_data);
                 } else {
-                    console.log("Previously paired hub couldn't be discovered on the network: " +
+                    Log("Previously paired hub couldn't be discovered on the network: " +
                         JSON.stringify(device_data));
                 }
             });
@@ -72,7 +72,7 @@ module.exports.deleted = function(device_data, callback) {
     GetClient(device_data.id,
         function(error, client) {
             if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
+                Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 // Stop refreshing the current activity.
@@ -80,7 +80,7 @@ module.exports.deleted = function(device_data, callback) {
 
                 // Disconnect from the hub.
                 client.end();
-                console.log("Disconnected from device.");
+                Log("Disconnected from device.");
             }
         });
 
@@ -100,7 +100,7 @@ module.exports.pair = function(socket) {
     // this method is run when Homey.emit('start') is run on the front-end
     socket.on('start',
         function(data, callback) {
-            console.log("Pairing started...");
+            Log("Pairing started...");
 
             // fire the callback (you can only do this once)
             // ( err, result )
@@ -109,7 +109,7 @@ module.exports.pair = function(socket) {
             // send a message to the front-end, even after the callback has fired
             //setTimeout(function () {
             //    socket.emit("hello", "Hello to you!", function (err, result) {
-            //        console.log(result); // result is `Hi!`
+            //        Log(result); // result is `Hi!`
             //    });
             //}, 2000);
         });
@@ -120,13 +120,13 @@ module.exports.pair = function(socket) {
         function(data, callback) {
             StartHubDiscovery(function(error, hubs) {
                 if (error) {
-                    console.log(error);
+                    Log(error);
                     StopHubDiscovery();
 
                     callback(error, null);
                 } else {
-                    console.log("Discovered " + hubs.length + " hub(s).");
-                    //console.log(JSON.stringify(hubs));
+                    Log("Discovered " + hubs.length + " hub(s).");
+                    //Log(JSON.stringify(hubs));
 
                     StopHubDiscovery();
 
@@ -134,7 +134,7 @@ module.exports.pair = function(socket) {
                     hubs.forEach(function(hub) {
                         listOfDevices.push(MapHubToDeviceData(hub));
                     });
-                    //console.log(JSON.stringify(listOfDevices));
+                    //Log(JSON.stringify(listOfDevices));
 
                     // err, result style
                     callback(null, listOfDevices);
@@ -151,7 +151,7 @@ module.exports.pair = function(socket) {
     // ATHOM: User aborted pairing, or pairing is finished.
     socket.on("disconnect",
         function() {
-            console.log("User aborted pairing, or pairing is finished");
+            Log("User aborted pairing, or pairing is finished");
         });
 }
 
@@ -198,9 +198,9 @@ module.exports.capabilities = {
 
 module.exports.autocompleteActivity = function(args, callback) {
     if (args.query.length > 0) {
-        console.log("Finding activity '" + args.query + "' on " + args.args.hub.ip + "...");
+        Log("Finding activity '" + args.query + "' on " + args.args.hub.ip + "...");
     } else {
-        console.log("Finding activities on " + args.args.hub.ip + "...");
+        Log("Finding activities on " + args.args.hub.ip + "...");
     }
 
     //Homey.log(JSON.stringify(args));
@@ -208,7 +208,7 @@ module.exports.autocompleteActivity = function(args, callback) {
     GetClient(args.args.hub.id,
         function(error, client) {
             if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
+                Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 client.getActivities()
@@ -227,8 +227,8 @@ module.exports.autocompleteActivity = function(args, callback) {
                             callback(null, listOfActivities.sortBy("activityOrder"));
                         },
                         function(error) {
-                            console.log("Get activities failed: ");
-                            console.log(JSON.stringify(error));
+                            Log("Get activities failed: ");
+                            Log(JSON.stringify(error));
                             callback(error, null);
                         });
             }
@@ -237,9 +237,9 @@ module.exports.autocompleteActivity = function(args, callback) {
 
 module.exports.autocompleteDevice = function(args, callback) {
     if (args.query.length > 0) {
-        console.log("Finding device '" + args.query + "' on " + args.args.hub.ip + "...");
+        Log("Finding device '" + args.query + "' on " + args.args.hub.ip + "...");
     } else {
-        console.log("Finding device on " + args.args.hub.ip + "...");
+        Log("Finding device on " + args.args.hub.ip + "...");
     }
 
     //Homey.log(JSON.stringify(args));
@@ -247,7 +247,7 @@ module.exports.autocompleteDevice = function(args, callback) {
     GetClient(args.args.hub.id,
         function(error, client) {
             if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
+                Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 GetDevices(client,
@@ -266,23 +266,23 @@ module.exports.autocompleteDevice = function(args, callback) {
 };
 
 module.exports.startActivity = function (args, callback) {
-    console.log("Starting activity '" + args.activity.name + "' on " + args.hub.ip + "...");
+    Log("Starting activity '" + args.activity.name + "' on " + args.hub.ip + "...");
 
     GetClient(args.hub.id,
         function(error, client) {
             if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
+                Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 client.isOff()
                     .then(function(off) {
                             if (off) {
-                                console.log("- Hub status: off");
-                                console.log("Starting activity...");
+                                Log("- Hub status: off");
+                                Log("Starting activity...");
                                 StartActivity(function(error, started) {
                                         if (error) {
-                                            console.log("Starting activity failed: ");
-                                            console.log(JSON.stringify(error));
+                                            Log("Starting activity failed: ");
+                                            Log(JSON.stringify(error));
                                             callback(error, null);
                                         } else {
                                             callback(null, started);
@@ -291,17 +291,17 @@ module.exports.startActivity = function (args, callback) {
                                     client,
                                     args.activity.id);
                             } else {
-                                console.log("- Hub status: on");
+                                Log("- Hub status: on");
                                 client.getCurrentActivity()
                                     .then(function(currentActivityId) {
-                                            console.log("Current activity id: " + currentActivityId);
-                                            console.log("Requested activity id: " + args.activity.id);
+                                            Log("Current activity id: " + currentActivityId);
+                                            Log("Requested activity id: " + args.activity.id);
                                             if (currentActivityId !== args.activity.id) {
-                                                console.log("Switching activity...");
+                                                Log("Switching activity...");
                                                 StartActivity(function(error, started) {
                                                         if (error) {
-                                                            console.log("Switching activity failed: ");
-                                                            console.log(JSON.stringify(error));
+                                                            Log("Switching activity failed: ");
+                                                            Log(JSON.stringify(error));
                                                             callback(error, null);
                                                         } else {
                                                             callback(null, started);
@@ -310,20 +310,20 @@ module.exports.startActivity = function (args, callback) {
                                                     client,
                                                     args.activity.id);
                                             } else {
-                                                console.log("Requested activity already selected.");
+                                                Log("Requested activity already selected.");
                                                 callback(null, true);
                                             }
                                         },
                                         function(error) {
-                                            console.log("Get current activity failed: ");
-                                            console.log(JSON.stringify(error));
+                                            Log("Get current activity failed: ");
+                                            Log(JSON.stringify(error));
                                             callback(error, null);
                                         });
                             }
                         },
                         function(error) {
-                            console.log("Unable to determine client state: ");
-                            console.log(JSON.stringify(error));
+                            Log("Unable to determine client state: ");
+                            Log(JSON.stringify(error));
                             callback(error, null);
                         });
             }
@@ -331,12 +331,12 @@ module.exports.startActivity = function (args, callback) {
 };
 
 module.exports.sendCommandToDevice = function (args, callback) {
-    console.log("Sending command to " + args.hub.ip + "...");
+    Log("Sending command to " + args.hub.ip + "...");
 
     GetClient(args.hub.id,
         function(error, client) {
             if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
+                Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 var actionSent = SendAction(client, args.action.action);
@@ -346,7 +346,7 @@ module.exports.sendCommandToDevice = function (args, callback) {
 };
 
 module.exports.allOff = function(args, callback) {
-    console.log("Turning all devices off on " + args.hub.ip + "...");
+    Log("Turning all devices off on " + args.hub.ip + "...");
 
     GetClient(args.hub.id,
         function(error, client) {
@@ -361,8 +361,8 @@ module.exports.allOff = function(args, callback) {
                         }
                     },
                     function (error) {
-                        console.log("Unable to determine client state: ");
-                        console.log(JSON.stringify(error));
+                        Log("Unable to determine client state: ");
+                        Log(JSON.stringify(error));
                         callback(error, null);
                     });
             }
@@ -379,85 +379,20 @@ function GetHubByData(device_data) {
     }
 }
 
-function GetCurrentActivityId(device_data_id, callback) {
-    GetClient(device_data_id,
-        function(error, client) {
-            if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
-                callback(error, null);
-            } else {
-                if (!client) {
-                    console.log("Client offline, retrying later...");
-                } else {
-                    console.log("Client found, getting current state...");
-                    client.isOff()
-                        .then(function(off) {
-                                if (off) {
-                                    console.log("Client turned off");
-                                    callback(null, null);
-                                } else {
-                                    console.log("Client turned on, getting current activity...");
-                                    client.getCurrentActivity()
-                                        .then(function(currentActivityId) {
-                                                callback(null, currentActivityId);
-                                            },
-                                            function(error) {
-                                                console.log("Get current activity failed: ");
-                                                console.log(JSON.stringify(error));
-                                                callback(error, null);
-                                            });
-                                }
-                            },
-                            function(error) {
-                                console.log("Getting device state failed: ");
-                                console.log(JSON.stringify(error));
-                                callback(error, null);
-                            });
-                }
-            }
-        });
-}
-
 function GetActivityName(device_data_id, activityId, callback) {
-    GetClient(device_data_id,
-        function(error, client) {
-            if (error) {
-                console.log("ERROR: " + JSON.stringify(error));
-                callback(error, null);
-            } else {
-                client.isOff()
-                    .then(function(off) {
-                            if (off) {
-                                callback(null, null);
-                            } else {
-                                client.getActivities()
-                                    .then(function(activities) {
-                                            activities.forEach(function(activity) {
-                                                if (activity.id === activityId) {
-                                                    if (callback) callback(null, activity.label);
-                                                }
-                                            });
-                                        },
-                                        function(error) {
-                                            console.log("Get activities failed: ");
-                                            console.log(JSON.stringify(error));
-                                            callback(error, null);
-                                        });
-                            }
-                        },
-                        function(error) {
-                            console.log("Getting device state failed: ");
-                            console.log(JSON.stringify(error));
-                            callback(error, null);
-                        });
+    if (Clients[device_data_id].activities) {
+        Clients[device_data_id].activities.forEach(function (activity) {
+            if (activity.id === activityId) {
+                if (callback) callback(null, activity.label);
             }
         });
+    }
 }
 
 // ATHOM: a helper method to add a device to the devices list.
 function InitDevice(device_data) {
-    console.log("Initializing device...");
-    //console.log(JSON.stringify(device_data));
+    Log("Initializing device...");
+    //Log(JSON.stringify(device_data));
 
     // Add hub to list of devices.
     Hubs[device_data.id] = {};
@@ -465,21 +400,21 @@ function InitDevice(device_data) {
     Clients[device_data.id] = {};
     Clients[device_data.id].ip = device_data.ip;
 
-    console.log("Device and client initialized. Connecting...");
+    Log("Device and client initialized. Connecting...");
 
     // Open a connection to the hub and get the current hub activity.
     Harmony(device_data.ip)
         .then(function(harmonyClient) {
-                console.log("Connected to device.");
+                Log("Connected to device.");
 
                 harmonyClient._xmppClient.on("error",
                     function (e) {
-                        console.log("Client for hub " + device_data.id + " reported an error: ", e);
+                        Log("Client for hub " + device_data.id + " reported an error: ", e);
                     });
 
                 harmonyClient._xmppClient.on("offline",
                     function () {
-                        console.log("Client for hub " + device_data.id + " went offline. Re-establishing in 10 seconds...");
+                        Log("Client for hub " + device_data.id + " went offline. Re-establishing connection in 10 seconds...");
 
                         // Stop refreshing the current activity on the disconnected client.
                         clearInterval(Clients[device_data.id].interval);
@@ -490,104 +425,42 @@ function InitDevice(device_data) {
 
                 harmonyClient.on("stateDigest",
                     function(stateDigest) {
-                        console.log("Got state digest: " + JSON.stringify(stateDigest));
+                        HandleStateChange(stateDigest, device_data);
                     });
 
                 Clients[device_data.id].client = harmonyClient;
-                // Schedule refresh of current activity every 5 seconds.
-                Clients[device_data.id]
-                    .interval = setInterval(function() { RefreshCurrentDeviceActivity(device_data.id); }, 5000);
 
-                harmonyClient.isOff()
-                    .then(function(off) {
-                            if (off) {
-                                console.log("- Hub status: off");
-                            } else {
-                                console.log("- Hub status: on");
-                                GetCurrentActivityId(device_data.id,
-                                    function(error, currentActivityId) {
-                                        if (currentActivityId) {
-                                            GetActivityName(device_data.id,
-                                                currentActivityId,
-                                                function(error, activityName) {
-                                                    console.log("Current activity name: " + activityName);
-                                                    Hubs[device_data.id]
-                                                        .activity = { id: currentActivityId, name: activityName };
-                                                });
-                                        } else {
-                                            Hubs[device_data.id].activity = null;
-                                        }
-                                    },
-                                    function(error) {
-                                        console.log("Get current activity failed: ");
-                                        console.log(JSON.stringify(error));
-                                    });
-                            }
-                        },
-                        function(error) {
-                            console.log("Unable to determine client state: ");
-                            console.log(JSON.stringify(error));
-                        });
+                // Refresh now and schedule refresh of list of activities for every 60 seconds.
+                RefreshDeviceActivities(device_data.id);
+                Clients[device_data.id]
+                    .interval = setInterval(function() { RefreshDeviceActivities(device_data.id); }, 60000);
             },
             function(error) {
-                console.log("Connecting to hub failed: ");
-                console.log(JSON.stringify(error));
+                Log("Connecting to hub failed: ");
+                Log(JSON.stringify(error));
             });
 }
 
-/**
- * Refreshes the current device activity. Triggers the "activity_changed" flow card if it differs from the previous refresh.
- * 
- * @param {} deviceDataId
- * @returns {}
- */
-function RefreshCurrentDeviceActivity(deviceDataId) {
-    var device = Hubs[deviceDataId];
-    console.log("Refreshing current activity for device " + deviceDataId + "...");
-    GetCurrentActivityId(deviceDataId,
-        function(error, currentActivityId) {
-            console.log("Previous activity: " + JSON.stringify(Hubs[deviceDataId].activity));
-            console.log("Current activity id: " + currentActivityId);
-            if (device.activity) {
-                // Change from one activity...
-                if (device.activity.id !== currentActivityId) {
-                    if (currentActivityId) {
-                        // ... to another activity.
-                        GetActivityName(deviceDataId,
-                            currentActivityId,
-                            function(error, activityName) {
-                                device.activity = { id: currentActivityId, name: activityName };
-                                // Emit capability change event.
-                                Homey.manager("flow").trigger("activity_changed", { activity: activityName });
-                                console.log("Activity changed: " + activityName);
-                                //module.exports.realtime(Devices[deviceDataId].data, "activity", activity);
-                            });
-                    } else {
-                        // ... device was turned off.
-                    }
-                } else {
-                    if (!device.activity && currentActivityId) {
-                        // Turned on.
-                    }
-                }
+function RefreshDeviceActivities(deviceDataId) {
+    Log("Refreshing activities for device " + deviceDataId + "...");
+
+    GetClient(deviceDataId,
+        function (error, client) {
+            if (error) {
+                Log("ERROR: " + JSON.stringify(error));
+                callback(error, null);
             } else {
-                if (currentActivityId) {
-                    // Device was turned on.
-                    GetActivityName(deviceDataId,
-                        currentActivityId,
-                        function(error, activityName) {
-                            device.activity = { id: currentActivityId, name: activityName };
-                            // Emit capability change event.
-                            Homey.manager("flow").trigger("activity_changed", { activity: activityName });
-                            console.log("Activity changed: " + activityName);
-                            //module.exports.realtime(Devices[deviceDataId].data, "activity", activity);
+                client.getActivities()
+                    .then(function(activities) {
+                            Clients[deviceDataId].activities = activities;
+                            Log("Refreshed activities for device " + deviceDataId + ": " + activities.length + " found.");
+                        },
+                        function(error) {
+                            Log("Get activities failed: ");
+                            Log(JSON.stringify(error));
+                            callback(error, null);
                         });
-                }
             }
-        },
-        function(error) {
-            console.log("Get current activity failed: ");
-            console.log(JSON.stringify(error));
         });
 }
 
@@ -633,8 +506,8 @@ function StartHubDiscovery(callback) {
     //    // Triggered when a new hub was found.
 
     //    // Log IP address of hub we found.
-    //        console.log("online: " + hub.ip);
-    //        console.log(JSON.stringify(hub));
+    //        Log("online: " + hub.ip);
+    //        Log(JSON.stringify(hub));
 
     //        if (!hubInList(hub.ip)) {
     //            listOfHubs.push(hub);
@@ -654,7 +527,7 @@ function StartHubDiscovery(callback) {
             if (callback) callback(null, listOfHubs);
         });
 
-    console.log("Discovering hubs...");
+    Log("Discovering hubs...");
     Discover.start();
 }
 
@@ -668,7 +541,7 @@ function StopHubDiscovery() {
         Discover.stop();
     }
 
-    console.log("Stopped listening for hubs.");
+    Log("Stopped listening for hubs.");
 }
 
 /**
@@ -683,7 +556,7 @@ function GetDevices(client, callback) {
         .then(function(commands) {
                 var listOfDevices = [];
                 commands.device.forEach(function(device) {
-                    console.log("Found device " + device.id + ": " + device.label);
+                    Log("Found device " + device.id + ": " + device.label);
                     //device.icon = "";
                     device.name = device.label;
                     device.description = device.model;
@@ -692,8 +565,8 @@ function GetDevices(client, callback) {
                 if (callback) callback(listOfDevices);
             },
             function(error) {
-                console.log("Get devices failed: ");
-                console.log(JSON.stringify(error));
+                Log("Get devices failed: ");
+                Log(JSON.stringify(error));
                 callback(error, null);
             });
 }
@@ -711,9 +584,9 @@ function StartActivity(callback, client, activityId) {
                 var started = activities.some(function(activity) {
                     if (activity.id === activityId) {
                         // Found the activity we want.
-                        console.log("Activity '" + activity.label + "' found. Starting...");
+                        Log("Activity '" + activity.label + "' found. Starting...");
                         client.startActivity(activity.id);
-                        console.log("Activity '" + activity.label + "' started.");
+                        Log("Activity '" + activity.label + "' started.");
                         return true;
                     } else {
                         return false;
@@ -723,8 +596,8 @@ function StartActivity(callback, client, activityId) {
                 callback(null, started);
             },
             function(error) {
-                console.log("Get activities failed: ");
-                console.log(JSON.stringify(error));
+                Log("Get activities failed: ");
+                Log(JSON.stringify(error));
                 callback(error, null);
             });
 }
@@ -739,8 +612,69 @@ function StartActivity(callback, client, activityId) {
 function SendAction(client, action) {
     var encodedAction = action.replace(/\:/g, "::");
     client.send("holdAction", "action=" + encodedAction + ":status=press");
-    console.log("Action sent.");
+    Log("Action sent.");
     return true;
+}
+
+function HandleStateChange(stateDigest, device_data) {
+    switch (stateDigest.activityStatus) {
+    case 0:
+        if (stateDigest.runningActivityList.length === 0) {
+            Homey.manager("flow").trigger("all_turned_off", { hub_name: device_data.name });
+            Log("Activity: Stopped.");
+        } else {
+            GetActivityName(device_data.id,
+                stateDigest.runningActivityList,
+                function(error, activityName) {
+                    Homey.manager("flow")
+                        .trigger("activity_stopping", { hub_name: device_data.name, activity: activityName });
+                    Log("Activity '" + activityName + "' (" + stateDigest.runningActivityList + "): Stopping...");
+                });
+        }
+        break;
+    case 1:
+        GetActivityName(device_data.id,
+            stateDigest.activityId,
+            function (error, activityName) {
+                Homey.manager("flow")
+                    .trigger("activity_start_requested", { hub_name: device_data.name, activity: activityName });
+                Log("Activity '" + activityName + "' (" + stateDigest.activityId + "): Start requested.");
+            });
+        break;
+    case 2:
+        if (stateDigest.activityId === stateDigest.runningActivityList) {
+            GetActivityName(device_data.id,
+                stateDigest.runningActivityList,
+                function (error, activityName) {
+                    Homey.manager("flow")
+                        .trigger("activity_started", { hub_name: device_data.name, activity: activityName });
+                    Log("Activity '" + activityName + "' (" + stateDigest.runningActivityList + "): Started.");
+                });
+        } else {
+            GetActivityName(device_data.id,
+                stateDigest.activityId,
+                function (error, activityName) {
+                    Homey.manager("flow")
+                        .trigger("activity_starting", { hub_name: device_data.name, activity: activityName });
+                    Log("Activity '" + activityName + "' (" + stateDigest.activityId + "): Starting...");
+                });
+        }
+        break;
+    case 3:
+        GetActivityName(device_data.id,
+            stateDigest.runningActivityList,
+            function (error, activityName) {
+                Homey
+                    .manager("flow")
+                    .trigger("activity_stop_requested", { hub_name: device_data.name, activity: activityName });
+                Log("Activity '" + activityName + "' (" + stateDigest.runningActivityList + "): Stop requested.");
+            });
+        break;
+    default:
+        Log("ATTENTION: Unhandled state digest:");
+        Log(JSON.stringify(stateDigest));
+        break;
+    }
 }
 
 /**
@@ -751,7 +685,7 @@ function SendAction(client, action) {
  */
 function TurnOff(client) {
     client.turnOff();
-    console.log("All devices turned off.");
+    Log("All devices turned off.");
     return true;
 }
 
@@ -765,6 +699,11 @@ function GetClient(hubId, callback) {
 
     callback(error, client);
 };
+
+function Log(message) {
+    Homey.log(moment().format("HH:mm:ss.SSS") + " - " + message);
+}
+
 
 Array.prototype.sortBy = function (p) {
     return this.slice(0).sort(function (a, b) {
