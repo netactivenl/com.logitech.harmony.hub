@@ -21,7 +21,11 @@ Or
 
 ## Release history
 
-### v1.0.3 (current)
+### v1.0.4 (current)
+* Limited refresh of hub's activities to once directly after connecting.
+* Improved connection error handling through Homey's interface instead of app crashes.
+
+### v1.0.3
 
 * Major improvements on activity change detection (no more polling needed!).
 * Added additional flow cards to the "When..." column for more refined flow control: 
