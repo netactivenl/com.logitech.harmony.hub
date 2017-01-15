@@ -42,10 +42,15 @@ module.exports.init = function(devices_data, callback) {
 
                 if (hubDiscovered) {
                     // Initialize the previously paired hub.
-                    InitDevice(device_data);
+                    InitDevice(device_data, function(error) {
+                        if (error) {
+                            callback(error);
+                        }
+                    });
                 } else {
                     Log("Previously paired hub couldn't be discovered on the network: " +
                         JSON.stringify(device_data));
+                    callback("Hub with Id '" + device_data.Id + "' not found. Possibly the Hub is currently unreachable or its internal Id has changed. Please try removing your hub and re-adding it.");
                 }
             });
         });
@@ -331,7 +336,9 @@ module.exports.startActivity = function (args, callback) {
 };
 
 module.exports.sendCommandToDevice = function (args, callback) {
-    Log("Sending command to " + args.hub.ip + "...");
+    Log("Sending action to " + args.hub.ip + "...");
+
+    //Log(JSON.stringify(args.action));
 
     GetClient(args.hub.id,
         function(error, client) {
@@ -369,7 +376,11 @@ module.exports.allOff = function(args, callback) {
         });
 };
 
-// ATHOM: a helper method to get a device from the devices list by it's device_data object.
+/**
+ * ATHOM: a helper method to get a device from the devices list by it's device_data object.
+ * 
+ * @param {} device_data
+ */
 function GetHubByData(device_data) {
     var device = Hubs[device_data.id];
     if (typeof device === 'undefined') {
@@ -379,18 +390,12 @@ function GetHubByData(device_data) {
     }
 }
 
-function GetActivityName(device_data_id, activityId, callback) {
-    if (Clients[device_data_id].activities) {
-        Clients[device_data_id].activities.forEach(function (activity) {
-            if (activity.id === activityId) {
-                if (callback) callback(null, activity.label);
-            }
-        });
-    }
-}
-
-// ATHOM: a helper method to add a device to the devices list.
-function InitDevice(device_data) {
+/**
+ * ATHOM: a helper method to add a device to the devices list.
+ * 
+ * @param {} device_data
+ */
+function InitDevice(device_data, callback) {
     Log("Initializing device...");
     //Log(JSON.stringify(device_data));
 
@@ -417,7 +422,7 @@ function InitDevice(device_data) {
                         Log("Client for hub " + device_data.id + " went offline. Re-establishing connection in 10 seconds...");
 
                         // Stop refreshing the current activity on the disconnected client.
-                        clearInterval(Clients[device_data.id].interval);
+                        //clearInterval(Clients[device_data.id].interval);
 
                         // Re-establish connection in 10 seconds.
                         setTimeout(function () { InitDevice(device_data); }, 10000);
@@ -430,38 +435,70 @@ function InitDevice(device_data) {
 
                 Clients[device_data.id].client = harmonyClient;
 
-                // Refresh now and schedule refresh of list of activities for every 60 seconds.
-                RefreshDeviceActivities(device_data.id);
-                Clients[device_data.id]
-                    .interval = setInterval(function() { RefreshDeviceActivities(device_data.id); }, 60000);
+                // Refresh list of activities.
+                GetDeviceActivities(device_data.id, function(error, activities) {
+                    if (error) {
+                        Log("ERROR: " + JSON.stringify(error));
+                        callback(error);
+                    } else {
+                        Clients[device_data.id].activities = activities;
+                    }
+                });
+
+                // Schedule refresh of list of activities for every 60 seconds (cleared at line 420).
+                //Clients[device_data.id]
+                //    .interval = setInterval(function() { RefreshDeviceActivities(device_data.id); }, 60000);
             },
             function(error) {
                 Log("Connecting to hub failed: ");
                 Log(JSON.stringify(error));
+                callback(error);
             });
 }
 
-function RefreshDeviceActivities(deviceDataId) {
-    Log("Refreshing activities for device " + deviceDataId + "...");
+/**
+ * Refreshes the list of activities for the Hub with the given Id.
+ * 
+ * @param {} device_data_id
+ */
+function GetDeviceActivities(device_data_id, callback) {
+    Log("Refreshing activities for device " + device_data_id + "...");
 
-    GetClient(deviceDataId,
+    GetClient(device_data_id,
         function (error, client) {
             if (error) {
                 Log("ERROR: " + JSON.stringify(error));
                 callback(error, null);
             } else {
                 client.getActivities()
-                    .then(function(activities) {
-                            Clients[deviceDataId].activities = activities;
-                            Log("Refreshed activities for device " + deviceDataId + ": " + activities.length + " found.");
-                        },
-                        function(error) {
-                            Log("Get activities failed: ");
-                            Log(JSON.stringify(error));
-                            callback(error, null);
-                        });
+                    .then(function (activities) {
+                        Log("Refreshed activities for device " + device_data_id + ": " + activities.length + " found.");
+                        callback(null, activities);
+                    },
+                    function(error) {
+                        Log("Get activities failed: ");
+                        Log(JSON.stringify(error));
+                        callback(error, null);
+                    });
             }
         });
+}
+
+/**
+ * Gets the name of the activity with the given Id.
+ * 
+ * @param {} device_data_id
+ * @param {} activityId
+ * @param {} callback
+ */
+function GetActivityName(device_data_id, activityId, callback) {
+    if (Clients[device_data_id].activities) {
+        Clients[device_data_id].activities.forEach(function (activity) {
+            if (activity.id === activityId) {
+                if (callback) callback(null, activity.label);
+            }
+        });
+    }
 }
 
 /**
@@ -485,10 +522,10 @@ function MapHubToDeviceData(hub) {
 }
 
 /**
-* Initializes hub discovery.
-* 
-* @returns {} 
-*/
+ * Initializes Hub discovery.
+ * 
+ * @param callback
+ */
 function StartHubDiscovery(callback) {
 
     var listOfHubs = [];
@@ -616,6 +653,12 @@ function SendAction(client, action) {
     return true;
 }
 
+/**
+ * Handles a state digest by raising appropriate events.
+ * 
+ * @param {} stateDigest
+ * @param {} device_data
+ */
 function HandleStateChange(stateDigest, device_data) {
     switch (stateDigest.activityStatus) {
     case 0:
@@ -689,21 +732,41 @@ function TurnOff(client) {
     return true;
 }
 
-function GetClient(hubId, callback) {
+/**
+ * Gets the Client for the Hub with the given Id.
+ * 
+ * @param {} device_data_id
+ * @param {} callback
+ */
+function GetClient(device_data_id, callback) {
     var client = null;
-    var clientStruct = Clients[hubId];
-    var error = clientStruct ? null : "Hub with Id '" + hubId + "' not found. Disconnected?";
+    var clientStruct = Clients[device_data_id];
+    var error;
+    if (!clientStruct) {
+        error = "Hub with Id '" + device_data_id + "' not found. Possibly the Hub is currently unreachable or its internal Id has changed. Please try removing your hub and re-adding it.";
+    } else {
+        error = null;
+    }
+
     if (!error) {
         client = clientStruct.client;
     }
 
-    callback(error, client);
-};
+    if (!client) {
+        error = "Client for Hub with Id '" + device_data_id + "' not available (yet). Please try again in 10 seconds or so...";
+    }
 
+    callback(error, client);
+}
+
+/**
+ * Logs the given message (to the console).
+ * 
+ * @param message
+ */
 function Log(message) {
     Homey.log(moment().format("HH:mm:ss.SSS") + " - " + message);
 }
-
 
 Array.prototype.sortBy = function (p) {
     return this.slice(0).sort(function (a, b) {
