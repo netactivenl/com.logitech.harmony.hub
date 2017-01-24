@@ -16,7 +16,7 @@ module.exports.init = function(devices_data, callback) {
     // ATHOM: When the driver starts, Homey rebooted. Initialize all previously paired devices.
     Log("Previously paired " + devices_data.length + " hub(s).");
     //Log(JSON.stringify(devices_data));
-
+    
     if (devices_data.length > 0) {
         // Discover hubs currently on the network.
         StartHubDiscovery(function(error, hubs) {
@@ -48,9 +48,11 @@ module.exports.init = function(devices_data, callback) {
                         }
                     });
                 } else {
-                    Log("Previously paired hub couldn't be discovered on the network: " +
-                        JSON.stringify(device_data));
-                    callback("Hub with Id '" + device_data.Id + "' not found. Possibly the Hub is currently unreachable or its internal Id has changed. Please try removing your hub and re-adding it.");
+                    var error = "Hub with Id '" +
+                        device_data.Id +
+                        "' not found. Possibly the Hub is currently unreachable or its internal Id has changed. Please try removing your hub and re-adding it.";
+                    LogError(error);
+                    callback(error);
                 }
             });
         });
@@ -232,8 +234,7 @@ module.exports.autocompleteActivity = function(args, callback) {
                             callback(null, listOfActivities.sortBy("activityOrder"));
                         },
                         function(error) {
-                            Log("Get activities failed: ");
-                            Log(JSON.stringify(error));
+                            LogError("Get activities failed: " + JSON.stringify(error));
                             callback(error, null);
                         });
             }
@@ -320,15 +321,13 @@ module.exports.startActivity = function (args, callback) {
                                             }
                                         },
                                         function(error) {
-                                            Log("Get current activity failed: ");
-                                            Log(JSON.stringify(error));
+                                            LogError("Get current activity failed: " + JSON.stringify(error));
                                             callback(error, null);
                                         });
                             }
                         },
                         function(error) {
-                            Log("Unable to determine client state: ");
-                            Log(JSON.stringify(error));
+                            LogError("Unable to determine client state: " + JSON.stringify(error));
                             callback(error, null);
                         });
             }
@@ -410,22 +409,19 @@ function InitDevice(device_data, callback) {
     // Open a connection to the hub and get the current hub activity.
     Harmony(device_data.ip)
         .then(function(harmonyClient) {
-                Log("Connected to device.");
+                LogError(__("errors.client_connected"));
 
                 harmonyClient._xmppClient.on("error",
                     function (e) {
-                        Log("Client for hub " + device_data.id + " reported an error: ", e);
+                        LogError("Client for hub " + device_data.id + " reported an error: ", e);
                     });
 
                 harmonyClient._xmppClient.on("offline",
                     function () {
-                        Log("Client for hub " + device_data.id + " went offline. Re-establishing connection in 10 seconds...");
-
-                        // Stop refreshing the current activity on the disconnected client.
-                        //clearInterval(Clients[device_data.id].interval);
-
-                        // Re-establish connection in 10 seconds.
-                        setTimeout(function () { InitDevice(device_data); }, 10000);
+                        // Re-establish connection in X seconds.
+                        var reconnectIntervalInSeconds = Homey.manager("settings").get("reconnect_interval") || 10;
+                        LogError(__("errors.client_disconnected").replace("{0}", reconnectIntervalInSeconds));
+                        setTimeout(function() { InitDevice(device_data); }, reconnectIntervalInSeconds * 1000);
                     });
 
                 harmonyClient.on("stateDigest",
@@ -444,14 +440,9 @@ function InitDevice(device_data, callback) {
                         Clients[device_data.id].activities = activities;
                     }
                 });
-
-                // Schedule refresh of list of activities for every 60 seconds (cleared at line 420).
-                //Clients[device_data.id]
-                //    .interval = setInterval(function() { RefreshDeviceActivities(device_data.id); }, 60000);
             },
             function(error) {
-                Log("Connecting to hub failed: ");
-                Log(JSON.stringify(error));
+                LogError("Connecting to hub failed: " + JSON.stringify(error));
                 callback(error);
             });
 }
@@ -476,8 +467,7 @@ function GetDeviceActivities(device_data_id, callback) {
                         callback(null, activities);
                     },
                     function(error) {
-                        Log("Get activities failed: ");
-                        Log(JSON.stringify(error));
+                        LogError("Get activities failed: " + JSON.stringify(error));
                         callback(error, null);
                     });
             }
@@ -602,8 +592,7 @@ function GetDevices(client, callback) {
                 if (callback) callback(listOfDevices);
             },
             function(error) {
-                Log("Get devices failed: ");
-                Log(JSON.stringify(error));
+                LogError("Get devices failed: " + JSON.stringify(error));
                 callback(error, null);
             });
 }
@@ -621,9 +610,7 @@ function StartActivity(callback, client, activityId) {
                 var started = activities.some(function(activity) {
                     if (activity.id === activityId) {
                         // Found the activity we want.
-                        Log("Activity '" + activity.label + "' found. Starting...");
                         client.startActivity(activity.id);
-                        Log("Activity '" + activity.label + "' started.");
                         return true;
                     } else {
                         return false;
@@ -633,8 +620,7 @@ function StartActivity(callback, client, activityId) {
                 callback(null, started);
             },
             function(error) {
-                Log("Get activities failed: ");
-                Log(JSON.stringify(error));
+                LogError("Get activities failed: " + JSON.stringify(error));
                 callback(error, null);
             });
 }
@@ -757,6 +743,20 @@ function GetClient(device_data_id, callback) {
     }
 
     callback(error, client);
+}
+
+/**
+ * Logs the given message (to the console and by voice, if enabled).
+ * 
+ * @param message
+ */
+function LogError(message) {
+    var enableSpeech = Homey.manager("settings").get("enable_speech") || false;
+    if (enableSpeech) {
+        Homey.manager("speech-output").say(message);
+    }
+
+    Log(message);
 }
 
 /**

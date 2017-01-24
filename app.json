@@ -1,6 +1,6 @@
 {
   "id": "com.logitech.harmony.hub",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "compatibility": "0.x || 1.x",
   "name": {
     "en": "Harmony Hub App",

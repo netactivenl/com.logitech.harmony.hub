@@ -8,7 +8,7 @@ var self = module.exports = {
         self.listenForTriggers();
         console.log("Initializing Harmony Hub app completed.");
     },
-    
+
     /**
      * Starts listening for specific triggers and sends them to the requested Harmony Hub.
      * 
@@ -17,9 +17,10 @@ var self = module.exports = {
     listenForTriggers: function() {
 
         Array.prototype.sortBy = function(p) {
-            return this.slice(0).sort(function(a, b) {
-                return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
-            });
+            return this.slice(0)
+                .sort(function(a, b) {
+                    return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+                });
         }
 
         Homey.manager("flow")
@@ -36,7 +37,7 @@ var self = module.exports = {
 
         Homey.manager("flow")
             .on("action.send_command_to_device.controlGroup.autocomplete",
-                function (callback, args) {
+                function(callback, args) {
                     //Homey.log(JSON.stringify(args));
                     if (args.args.device.length === 0) {
                         callback(null, []);
@@ -44,9 +45,9 @@ var self = module.exports = {
                     }
 
                     var listOfControlGroups = [];
-                    args.args.device.controlGroup.forEach(function (controlGroup) {
+                    args.args.device.controlGroup.forEach(function(controlGroup) {
                         if (args.query.length === 0 ||
-                                controlGroup.name.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
+                            controlGroup.name.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
                             listOfControlGroups.push(controlGroup);
                         }
                     });
@@ -64,7 +65,7 @@ var self = module.exports = {
                     }
 
                     var actions = [];
-                    args.args.controlGroup.function.forEach(function (action) {
+                    args.args.controlGroup.function.forEach(function(action) {
                         if (args.query.length === 0 ||
                             action.label.toUpperCase().indexOf(args.query.toUpperCase()) !== -1) {
                             action.name = action.label;
@@ -94,5 +95,15 @@ var self = module.exports = {
                 });
 
         console.log("Listening for triggers...");
+    },
+
+    updateSettings: function(settings, callback) {
+        // Update settings.
+        Homey.manager("settings").set("reconnect_interval", parseInt(settings.reconnectIntervalInSeconds));
+        Homey.manager("settings").set("enable_speech", settings.enableSpeech === "true");
+        console.log("Settings updated: " + JSON.stringify(settings));
+
+        // Return success
+        if (callback) callback(null, true);
     }
 };

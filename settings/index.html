@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
+</head>
+<body>
+    <h1 data-i18n="settings.title"></h1>
+
+    <fieldset>
+        <legend><span data-i18n="settings.legend_settings"></span></legend>
+        <div class="field row">
+            <label style="width: 320px;"><span data-i18n="settings.reconnect_interval_in_seconds"></span></label>
+            <select id="reconnect_interval">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="120">120</option>
+            </select>
+        </div>
+        <div class="field row">
+            <label style="width: 320px;"><span data-i18n="settings.enable_speech"></span></label>
+            <input type="checkbox" id="enable_speech" style="width: 13px!important" />
+        </div>
+    </fieldset>
+
+    <button id="save" class="right" data-i18n="settings.save" onclick="saveSettings()"></button>
+
+    <script type="text/javascript">
+        function onHomeyReady() {
+            // We're ready!
+            Homey.ready();
+
+            Homey.get("reconnect_interval", function (err, intervalInSeconds) {
+                $("#reconnect_interval").val(intervalInSeconds || 10);
+            });
+
+            Homey.get("enable_speech", function (err, enableSpeech) {
+                $("#enable_speech").prop("checked", enableSpeech);
+            });
+        }
+
+        function saveSettings() {
+            // Update running app with new settings (PUT to api).
+            console.log("Saving settings...");
+
+            var reconnectIntervalInSeconds = $("#reconnect_interval").val();
+            var enableSpeech = $("#enable_speech").is(':checked');
+
+            var settings = {};
+            settings.reconnectIntervalInSeconds = reconnectIntervalInSeconds;
+            settings.enableSpeech = enableSpeech;
+
+            Homey.api("PUT", "/settings/", settings, function (err, success) {
+                if (success) {
+                    console.log("Settings saved successfull.");
+
+                    // Display successful update of settings.
+                    setSaveButton("green", "white", __("settings.saved"));
+
+                    // Store settings for the long term.
+                    Homey.set("reconnect_interval", reconnectIntervalInSeconds);
+                } else {
+                    console.log("Saving settings failed.");
+
+                    // Display failed registration
+                    setSaveButton("lightcoral", "black", __("settings.not_saved"));
+                }
+
+                resetSaveButton();
+            });
+        }
+
+        function resetSaveButton() {
+            setTimeout(function() {
+                setSaveButton("", "black", __("settings.save"));
+            }, 3000);
+        }
+
+        function setSaveButton(backgroundColor, color, innerHtml) {
+            var btnSave = document.getElementById("save");
+            btnSave.style["background-color"] = backgroundColor;
+            btnSave.style["color"] = color;
+            btnSave.innerHTML = innerHtml;
+        }
+    </script>
+</body>
+</html>

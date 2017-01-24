@@ -1820,6 +1820,7 @@
     <Content Include="node_modules\yargs\README.md" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="settings\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />
@@ -2271,6 +2272,7 @@
     <Folder Include="node_modules\xtend\" />
     <Folder Include="node_modules\yargs\" />
     <Folder Include="node_modules\yargs\lib\" />
+    <Folder Include="settings\" />
     <Folder Include="typings\" />
     <Folder Include="typings\globals\" />
     <Folder Include="typings\globals\moment\" />
