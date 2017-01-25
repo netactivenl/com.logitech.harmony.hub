@@ -100,7 +100,7 @@ var self = module.exports = {
     updateSettings: function(settings, callback) {
         // Update settings.
         Homey.manager("settings").set("reconnect_interval", parseInt(settings.reconnectIntervalInSeconds));
-        Homey.manager("settings").set("enable_speech", settings.enableSpeech === "true");
+        Homey.manager("settings").set("enable_speech", settings.enableSpeech);
         console.log("Settings updated: " + JSON.stringify(settings));
 
         // Return success
